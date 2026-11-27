@@ -1,4 +1,4 @@
-"""Olist Lab: backend Flask del panel académico. Ejecutar con HTTPS de desarrollo."""
+"""Olist Lab: backend Flask del panel académico. Ejecutar con HTTPS y la CA propia (pki.py)."""
 import argparse
 import getpass
 import hashlib
@@ -341,8 +341,9 @@ if __name__ == "__main__":
     elif args.command == "purge-audit":
         print(f"Eventos eliminados (más de {args.days} días): {purge_audit(args.days)}")
     elif args.command == "run-local-http":
-        # Solo para ver el prototipo en navegadores que bloquean certificados autofirmados.
+        # Solo para ver el prototipo si el navegador no confía en la CA. NO protege el tráfico.
         app.config["SESSION_COOKIE_SECURE"] = False
         app.run(host="127.0.0.1", port=args.port or 5001, debug=False)
     else:
-        app.run(host="127.0.0.1", port=args.port or 5000, debug=False, ssl_context="adhoc")
+        from pki import server_context
+        app.run(host="127.0.0.1", port=args.port or 5000, debug=False, ssl_context=server_context())
