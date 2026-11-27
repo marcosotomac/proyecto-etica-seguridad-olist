@@ -1,11 +1,14 @@
-"""Importa únicamente columnas necesarias desde el ZIP original de Olist."""
+"""Importa únicamente las columnas necesarias desde el ZIP original de Olist.
+
+Minimización: no se importan identificadores de clientes ni de vendedores, nombres,
+ciudades, códigos postales, coordenadas, pagos ni el texto libre de las reseñas.
+"""
 import csv
 import io
 import zipfile
-from pathlib import Path
-from db_crypto import DB, connect
 
-ROOT = Path(__file__).resolve().parent
+from db_crypto import DB, ROOT, connect
+
 ZIP = ROOT / "data" / "olist.zip"
 
 
@@ -18,18 +21,18 @@ def day(value):
     return value[:10] if value else None
 
 
+INSERT = """INSERT INTO deliveries (purchase_date, estimated_date, delivered_date, customer_state,
+    review_score, delay_days, is_late) VALUES (?,?,?,?,?,?,?)"""
+
+
 def main():
     if not ZIP.exists():
         raise SystemExit(f"Falta {ZIP}. Descarga el ZIP original de Olist.")
-    DB.parent.mkdir(exist_ok=True)
     with zipfile.ZipFile(ZIP) as archive:
         customers = {r["customer_id"]: r["customer_state"] for r in rows(archive, "olist_customers_dataset.csv")}
         reviews = {}
         for r in rows(archive, "olist_order_reviews_dataset.csv"):
             reviews.setdefault(r["order_id"], int(r["review_score"]))
-        sellers = {}
-        for r in rows(archive, "olist_order_items_dataset.csv"):
-            sellers.setdefault(r["order_id"], r["seller_id"])
         with connect(create=True) as db:
             db.executescript("""
                 DROP TABLE IF EXISTS deliveries;
@@ -41,8 +44,7 @@ def main():
                     estimated_date TEXT NOT NULL,
                     delivered_date TEXT NOT NULL,
                     customer_state TEXT NOT NULL,
-                    seller_id TEXT,
-                    review_score INTEGER,
+                    review_score INTEGER CHECK (review_score BETWEEN 1 AND 5),
                     delay_days REAL NOT NULL,
                     is_late INTEGER NOT NULL CHECK (is_late IN (0,1))
                 );
@@ -62,13 +64,12 @@ def main():
                     continue
                 # julianday conserva fracciones y evita errores en cambios de mes/año.
                 delay = db.execute("SELECT julianday(?) - julianday(?)", (delivered, estimated)).fetchone()[0]
-                batch.append((purchase, estimated, delivered, state, sellers.get(r["order_id"]),
-                              reviews.get(r["order_id"]), delay, int(delay > 0)))
+                batch.append((purchase, estimated, delivered, state, reviews.get(r["order_id"]), delay, int(delay > 0)))
                 if len(batch) >= 5000:
-                    db.executemany("INSERT INTO deliveries (purchase_date, estimated_date, delivered_date, customer_state, seller_id, review_score, delay_days, is_late) VALUES (?,?,?,?,?,?,?,?)", batch)
+                    db.executemany(INSERT, batch)
                     batch.clear()
             if batch:
-                db.executemany("INSERT INTO deliveries (purchase_date, estimated_date, delivered_date, customer_state, seller_id, review_score, delay_days, is_late) VALUES (?,?,?,?,?,?,?,?)", batch)
+                db.executemany(INSERT, batch)
             count = db.execute("SELECT count(*) FROM deliveries").fetchone()[0]
     print(f"Importados {count:,} pedidos entregados; excluidos {skipped:,} sin entrega o datos completos. Base: {DB}")
 
