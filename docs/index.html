@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Olist Lab — Ética y Seguridad de Datos (DS3031)</title>
-  <meta name="description" content="Informe técnico y demostración académica: Panel seguro para el análisis de entregas de Olist. UTEC 2026.">
+  <meta name="description" content="Informe final (Tipo 2) y demostración académica: panel seguro para el análisis de entregas de Olist, con CA propia, DPIA y análisis con herramientas de seguridad. UTEC 2026.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -145,13 +145,13 @@
         </a>
 
         <!-- Boton de Descarga de Informe LaTeX explicito -->
-        <a href="Informe_Olist_Final_Tipo2.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground shadow-sm transition-all hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98]">
+        <a href="Informe_Olist.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground shadow-sm transition-all hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98]">
           <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" x2="12" y1="15" y2="3"/>
           </svg>
-          <span>Descargar informe LaTeX (PDF)</span>
+          <span class="hidden sm:inline">Descargar informe (PDF)</span><span class="sm:hidden">PDF</span>
         </a>
       </div>
     </div>
@@ -172,29 +172,41 @@
       <a href="#sec-analisis" data-target="sec-analisis" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
         <span class="font-mono text-[10px] text-zinc-500">04</span><span>Análisis</span>
       </a>
-      <a href="#sec-requerimientos" data-target="sec-requerimientos" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">05</span><span>Diseño</span>
+      <a href="#sec-marco" data-target="sec-marco" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">05</span><span>Marco</span>
+      </a>
+      <a href="#sec-req-seguridad" data-target="sec-req-seguridad" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">06</span><span>S01–S10</span>
+      </a>
+      <a href="#sec-diseno" data-target="sec-diseno" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">07</span><span>Diseño</span>
       </a>
       <a href="#sec-seguridad" data-target="sec-seguridad" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">06</span><span>Seguridad</span>
+        <span class="font-mono text-[10px] text-zinc-500">08</span><span>Seguridad</span>
       </a>
       <a href="#sec-politicas" data-target="sec-politicas" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">07</span><span>Políticas</span>
+        <span class="font-mono text-[10px] text-zinc-500">09</span><span>Políticas</span>
       </a>
       <a href="#sec-incidentes" data-target="sec-incidentes" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">08</span><span>Incidentes</span>
+        <span class="font-mono text-[10px] text-zinc-500">10</span><span>Incidentes</span>
       </a>
-      <a href="#sec-evidencias" data-target="sec-evidencias" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all font-medium">
-        <span class="font-mono text-[10px] text-zinc-500">09</span><span>Evidencias</span>
+      <a href="#sec-evidencias" data-target="sec-evidencias" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">11</span><span>Evidencias</span>
+      </a>
+      <a href="#sec-herramientas" data-target="sec-herramientas" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">12</span><span>Herramientas</span>
+      </a>
+      <a href="#sec-dpia" data-target="sec-dpia" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
+        <span class="font-mono text-[10px] text-zinc-500">13</span><span>DPIA</span>
       </a>
       <a href="#sec-recomendaciones" data-target="sec-recomendaciones" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">10</span><span>Futuro</span>
+        <span class="font-mono text-[10px] text-zinc-500">14</span><span>Futuro</span>
       </a>
       <a href="#sec-retrospectiva" data-target="sec-retrospectiva" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">11</span><span>Retrospectiva</span>
+        <span class="font-mono text-[10px] text-zinc-500">15</span><span>Retrospectiva</span>
       </a>
       <a href="#sec-conclusiones" data-target="sec-conclusiones" class="mobile-toc-link inline-flex items-center gap-1 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground transition-all">
-        <span class="font-mono text-[10px] text-zinc-500">12</span><span>Conclusiones</span>
+        <span class="font-mono text-[10px] text-zinc-500">16</span><span>Conclusiones</span>
       </a>
     </div>
   </div>
@@ -203,11 +215,11 @@
   <section id="inicio" class="border-b border-border bg-background py-14 sm:py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-8">
       <div class="max-w-3xl space-y-4">
-        <div class="inline-flex items-center gap-2 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground">
-          <span class="size-1.5 rounded-full bg-zinc-400"></span>
+        <div class="inline-flex flex-wrap items-center gap-2 rounded-md border border-border bg-secondary/80 px-2.5 py-1 text-xs text-muted-foreground">
+          <span class="size-1.5 rounded-full bg-emerald-400"></span>
           <span>Universidad de Ingeniería y Tecnología — UTEC</span>
           <span class="text-zinc-600">·</span>
-          <span>Proyecto Final · Tipo 2</span>
+          <span>Proyecto Final · DS3031 · Tipo 2 · Entrega final</span>
         </div>
 
         <h1 class="text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
@@ -215,7 +227,7 @@
         </h1>
 
         <p class="text-base leading-7 text-muted-foreground sm:text-lg">
-          Demostración académica para la evaluación de retrasos logísticos y satisfacción del cliente (2016–2018), integrando feriados oficiales de Brasil, controles de acceso RBAC, auditoría trazable, cifrado en reposo con SQLCipher y procedimientos de recuperación ante desastres con AES-256-GCM.
+          Caso de negocio: retrasos logísticos y satisfacción del cliente (2016–2018) con feriados oficiales de Brasil. Base cifrada con SQLCipher, HTTPS con un certificado de una CA propia (TLS 1.3), roles y auditoría, supresión de grupos pequeños en el servidor, respaldos AES-256-GCM, DPIA y análisis de la implementación con herramientas de seguridad.
         </p>
 
         <!-- Metadata & Authors -->
@@ -227,32 +239,35 @@
             <span class="font-medium">Marco Soto Maceda</span>
           </div>
           <span class="text-zinc-600">·</span>
-          <span>Lima, Perú · Noviembre 2026</span>
+          <span>Lima, Perú · Noviembre de 2026</span>
         </div>
 
-        <!-- Action CTAs -->
+        <!-- Action CTAs: downloads and project links -->
         <div class="flex flex-wrap items-center gap-3 pt-4">
-          <a href="Informe_Olist_Final_Tipo2.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground shadow-sm transition-all hover:bg-zinc-200 hover:scale-[1.01] active:scale-[0.99]">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
-            <span>Descargar informe final (PDF)</span>
+          <a href="Informe_Olist.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground shadow-sm transition-all hover:bg-zinc-200 hover:scale-[1.01] active:scale-[0.99]">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Informe final (PDF)</span>
           </a>
-
+          <a href="Presentacion_Tipo2.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-secondary/80 px-4 text-xs font-medium text-foreground transition-all hover:bg-accent hover:border-zinc-700">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Presentación (PDF)</span>
+          </a>
           <a href="https://github.com/ronaljcb/proyecto-etica-seguridad-olist" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-secondary/80 px-4 text-xs font-medium text-foreground transition-all hover:bg-accent hover:border-zinc-700">
-            <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-            </svg>
-            <span>Ver código en GitHub</span>
+            <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            <span>Repositorio en GitHub</span>
+          </a>
+          <a href="https://github.com/ronaljcb/proyecto-etica-seguridad-olist/blob/main/informe/Demo_Tipo2.md" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-secondary/80 px-4 text-xs font-medium text-foreground transition-all hover:bg-accent hover:border-zinc-700">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span>Guía de la demo</span>
+          </a>
+          <a href="https://github.com/ronaljcb/proyecto-etica-seguridad-olist/tree/main/informe/evidencias" target="_blank" rel="noopener noreferrer" class="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-secondary/80 px-4 text-xs font-medium text-foreground transition-all hover:bg-accent hover:border-zinc-700">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            <span>Carpeta de evidencias</span>
           </a>
         </div>
       </div>
 
-      <!-- KPI Summary Cards (Identical metrics to platform) -->
+      <!-- KPI Summary Cards -->
       <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="interactive-card rounded-lg border border-border bg-card p-5">
           <div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -262,32 +277,70 @@
           <div class="mt-3 text-3xl font-semibold tracking-tight text-foreground tabular-nums">6.8 %</div>
           <p class="mt-2 text-xs text-muted-foreground">6 534 de 96 470 pedidos entregados tras la fecha estimada</p>
         </div>
-
         <div class="interactive-card rounded-lg border border-border bg-card p-5">
           <div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/></svg>
             <span>Pedidos analizados</span>
           </div>
           <div class="mt-3 text-3xl font-semibold tracking-tight text-foreground tabular-nums">96 470</div>
-          <p class="mt-2 text-xs text-muted-foreground">Entregados con fechas y estado del cliente completos</p>
+          <p class="mt-2 text-xs text-muted-foreground">Entregados con fechas y estado del cliente disponibles</p>
         </div>
-
         <div class="interactive-card rounded-lg border border-border bg-card p-5">
           <div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Retraso promedio</span>
+            <span>Retraso medio</span>
           </div>
           <div class="mt-3 text-3xl font-semibold tracking-tight text-foreground tabular-nums">10.6 días</div>
-          <p class="mt-2 text-xs text-muted-foreground">Calculado únicamente sobre los pedidos tardíos</p>
+          <p class="mt-2 text-xs text-muted-foreground">Calculado únicamente sobre los 6 534 pedidos tardíos</p>
         </div>
-
         <div class="interactive-card rounded-lg border border-border bg-card p-5">
           <div class="flex items-center gap-2 text-xs font-medium text-muted-foreground">
             <svg class="size-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>Calificación media</span>
           </div>
           <div class="mt-3 text-3xl font-semibold tracking-tight text-foreground tabular-nums">4.29 / 5</div>
-          <p class="mt-2 text-xs text-muted-foreground">Pedidos puntuales · Tardíos obtuvieron 2.27 / 5</p>
+          <p class="mt-2 text-xs text-muted-foreground">Pedidos puntuales · los tardíos obtuvieron 2.27 / 5</p>
+        </div>
+      </div>
+
+      <!-- Rubric compliance summary -->
+      <div id="cumplimiento" class="interactive-card mt-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-sm font-semibold tracking-tight text-foreground">Cumplimiento de la rúbrica</h2>
+          <span class="rounded border border-border bg-secondary px-2 py-0.5 font-mono text-[10px] text-zinc-400">Entrega final · Tipo 2</span>
+        </div>
+        <div class="mt-4 grid gap-4 lg:grid-cols-2">
+          <ul class="space-y-2 text-xs leading-5 text-muted-foreground">
+            <li class="flex items-start gap-2"><svg class="size-3.5 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong class="text-foreground">Seguridad S01–S10:</strong> reposo, tránsito con CA propia, hash, accesos, auditoría, respaldo, herramientas de análisis, uso seguro, riesgos y plan de incidentes (<a class="underline hover:text-foreground" href="#sec-req-seguridad">tabla</a>).</span></li>
+            <li class="flex items-start gap-2"><svg class="size-3.5 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong class="text-foreground">Funcionales F1–F7:</strong> importación de dos fuentes, indicadores y filtros, feriados, acceso por roles, respaldo y contingencia, administración por consola y HTTPS con la CA propia (<a class="underline hover:text-foreground" href="#sec-diseno">tabla</a>).</span></li>
+            <li class="flex items-start gap-2"><svg class="size-3.5 shrink-0 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span><strong class="text-foreground">F8 descartado por la DPIA:</strong> no se consultan registros individuales ni análisis por vendedor (<a class="underline hover:text-foreground" href="#sec-dpia">DPIA</a>).</span></li>
+          </ul>
+          <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">35/35</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">pruebas pytest</div>
+            </div>
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">20/20</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">comprobaciones en vivo por HTTPS</div>
+            </div>
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">0</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">hallazgos de Bandit tras corregir</div>
+            </div>
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">15→0</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">vulnerabilidades npm audit</div>
+            </div>
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">0</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">vulnerabilidades pip-audit</div>
+            </div>
+            <div class="rounded-md border border-border bg-background px-3 py-2.5">
+              <div class="font-mono text-lg font-semibold tabular-nums text-foreground">TLS 1.3</div>
+              <div class="mt-0.5 text-[11px] leading-4 text-muted-foreground">verificado contra la CA propia</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -302,7 +355,7 @@
         <div class="sticky top-20 rounded-lg border border-border bg-card p-4">
           <div class="flex items-center justify-between pb-1">
             <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Índice del Informe</span>
-            <span class="rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">12 secciones</span>
+            <span class="rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">16 secciones</span>
           </div>
 
           <!-- TOC Links Container with Spine & Magnetic Sliding Pill -->
@@ -313,88 +366,101 @@
             <!-- Magnetic Sliding Pill (glides behind active link) -->
             <div id="toc-pill" class="absolute left-0 w-full rounded-md bg-secondary/90 border border-border/80 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-0" style="top: 0px; height: 32px;"></div>
 
-            <nav id="toc-nav" class="relative z-10 flex flex-col space-y-1 text-xs">
+            <nav id="toc-nav" class="relative z-10 flex flex-col space-y-0.5 text-xs">
               <a href="#sec-resumen" data-target="sec-resumen" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">01</span>
                   <span class="toc-text transition-colors">Resumen ejecutivo</span>
                 </span>
               </a>
-
               <a href="#sec-intro" data-target="sec-intro" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">02</span>
-                  <span class="toc-text transition-colors">Introducción y negocio</span>
+                  <span class="toc-text transition-colors">Introducción y caso de negocio</span>
                 </span>
               </a>
-
               <a href="#sec-fuentes" data-target="sec-fuentes" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">03</span>
-                  <span class="toc-text transition-colors">Fuentes y calidad</span>
+                  <span class="toc-text transition-colors">Fuentes, alcance y calidad</span>
                 </span>
               </a>
-
               <a href="#sec-analisis" data-target="sec-analisis" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">04</span>
                   <span class="toc-text transition-colors">Análisis descriptivo</span>
                 </span>
               </a>
-
-              <a href="#sec-requerimientos" data-target="sec-requerimientos" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+              <a href="#sec-marco" data-target="sec-marco" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">05</span>
+                  <span class="toc-text transition-colors">Marco teórico</span>
+                </span>
+              </a>
+              <a href="#sec-req-seguridad" data-target="sec-req-seguridad" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">06</span>
+                  <span class="toc-text transition-colors">Requerimientos de seguridad</span>
+                </span>
+              </a>
+              <a href="#sec-diseno" data-target="sec-diseno" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">07</span>
                   <span class="toc-text transition-colors">Requerimientos y diseño</span>
                 </span>
               </a>
-
               <a href="#sec-seguridad" data-target="sec-seguridad" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
-                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">06</span>
-                  <span class="toc-text transition-colors">Seguridad y ética</span>
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">08</span>
+                  <span class="toc-text transition-colors">Diseño de seguridad</span>
                 </span>
               </a>
-
               <a href="#sec-politicas" data-target="sec-politicas" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
-                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">07</span>
-                  <span class="toc-text transition-colors">Políticas de uso</span>
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">09</span>
+                  <span class="toc-text transition-colors">Políticas y formación</span>
                 </span>
               </a>
-
               <a href="#sec-incidentes" data-target="sec-incidentes" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
-                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">08</span>
-                  <span class="toc-text transition-colors">Incidentes y contingencia</span>
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">10</span>
+                  <span class="toc-text transition-colors">Respuesta ante incidentes</span>
                 </span>
               </a>
-
               <a href="#sec-evidencias" data-target="sec-evidencias" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
-                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">09</span>
-                  <span class="toc-text transition-colors font-medium">Evidencias</span>
-                </span>
-              </a>
-
-              <a href="#sec-recomendaciones" data-target="sec-recomendaciones" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
-                <span class="flex items-center gap-2">
-                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">10</span>
-                  <span class="toc-text transition-colors">Recomendaciones</span>
-                </span>
-              </a>
-
-              <a href="#sec-retrospectiva" data-target="sec-retrospectiva" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
-                <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">11</span>
-                  <span class="toc-text transition-colors">Retrospectiva</span>
+                  <span class="toc-text transition-colors">Implementación y evidencias</span>
                 </span>
               </a>
-
-              <a href="#sec-conclusiones" data-target="sec-conclusiones" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+              <a href="#sec-herramientas" data-target="sec-herramientas" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
                 <span class="flex items-center gap-2">
                   <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">12</span>
-                  <span class="toc-text transition-colors">Conclusiones</span>
+                  <span class="toc-text transition-colors">Herramientas de análisis</span>
+                </span>
+              </a>
+              <a href="#sec-dpia" data-target="sec-dpia" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">13</span>
+                  <span class="toc-text transition-colors">DPIA</span>
+                </span>
+              </a>
+              <a href="#sec-recomendaciones" data-target="sec-recomendaciones" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">14</span>
+                  <span class="toc-text transition-colors">Recomendaciones futuras</span>
+                </span>
+              </a>
+              <a href="#sec-retrospectiva" data-target="sec-retrospectiva" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">15</span>
+                  <span class="toc-text transition-colors">Lecciones y retrospectiva</span>
+                </span>
+              </a>
+              <a href="#sec-conclusiones" data-target="sec-conclusiones" class="toc-link group flex items-center justify-between rounded px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
+                <span class="flex items-center gap-2">
+                  <span class="toc-num font-mono text-[10px] text-zinc-500 transition-colors group-hover:text-zinc-300">16</span>
+                  <span class="toc-text transition-colors">Conclusiones y referencias</span>
                 </span>
               </a>
             </nav>
@@ -403,11 +469,11 @@
           <!-- Micro-Telemetry Reader Meter -->
           <div class="mt-4 pt-3.5 border-t border-border flex flex-col gap-1.5 text-[11px] text-muted-foreground">
             <div class="flex items-center justify-between">
-              <span id="toc-progress-label" class="font-medium text-foreground">Sección 01 de 12</span>
-              <span id="toc-progress-pct" class="font-mono text-zinc-400">8%</span>
+              <span id="toc-progress-label" class="font-medium text-foreground">Sección 01 de 16</span>
+              <span id="toc-progress-pct" class="font-mono text-zinc-400">6%</span>
             </div>
             <div class="w-full h-1 rounded-full bg-secondary overflow-hidden">
-              <div id="toc-progress-bar" class="h-full bg-zinc-300 rounded-full transition-all duration-200 ease-out" style="width: 8%;"></div>
+              <div id="toc-progress-bar" class="h-full bg-zinc-300 rounded-full transition-all duration-200 ease-out" style="width: 6%;"></div>
             </div>
           </div>
         </div>
@@ -416,258 +482,548 @@
       <!-- Main Document Stream with Smooth Scroll Reveals -->
       <main class="space-y-8 lg:col-span-9">
 
-        <!-- 1. Resumen Ejecutivo -->
+        <!-- 1. Resumen ejecutivo -->
         <section id="sec-resumen" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 01</div>
           <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">1. Resumen ejecutivo</h2>
-          <p class="mt-3 text-sm"><a class="underline" href="Informe_Olist_Final_Tipo2.pdf">Descargar informe final Tipo 2 con la DPIA y el análisis de seguridad</a></p>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
             <p>Desarrollamos un prototipo académico para analizar las entregas tardías del conjunto histórico de comercio electrónico de Olist. Buscamos identificar segmentos que merecen una investigación logística y describir cómo varía la calificación de la compra según el cumplimiento de la fecha estimada de entrega. Para ampliar el análisis, incorporamos una segunda fuente: el calendario oficial de feriados nacionales de Brasil de 2018.</p>
-            <p>De los 99 441 pedidos del archivo original, seleccionamos <strong class="text-foreground">96 470 pedidos entregados</strong> con fechas y estado del cliente disponibles. Entre ellos, 6 534 llegaron después de la fecha estimada: <strong class="text-foreground">6.8 %</strong>. El retraso medio de esos pedidos fue de <strong class="text-foreground">10.6 días</strong>. La calificación promedio, calculada con las reseñas disponibles, fue de <strong class="text-emerald-400">4.29/5</strong> para las entregas puntuales y <strong class="text-foreground">2.27/5</strong> para las tardías. La comparación es descriptiva y no demuestra causalidad.</p>
-            <p>Implementamos una base SQLite cifrada con SQLCipher, un backend Flask y un panel React con componentes shadcn/ui. El sistema incluye autenticación, roles RBAC (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs text-foreground">admin</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs text-foreground">analyst</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs text-foreground">reader</code>), registro de auditoría, HTTPS local y respaldos autenticados con AES-256-GCM. Reconocemos que el ZIP original sigue sin cifrar y que el modo HTTP local no protege el tráfico.</p>
+            <p>De los 99 441 pedidos del archivo original, seleccionamos <strong class="text-foreground">96 470</strong> entregados con fechas y estado del cliente disponibles. Entre ellos, 6 534 llegaron después de la fecha estimada: <strong class="text-foreground">6.8 %</strong>. El retraso medio de esos pedidos fue de <strong class="text-foreground">10.6 días</strong>. La calificación promedio, calculada con las reseñas disponibles, fue de <strong class="text-emerald-400">4.29/5</strong> para las entregas puntuales y <strong class="text-foreground">2.27/5</strong> para las tardías. La comparación es descriptiva y no demuestra causalidad.</p>
+            <p>Implementamos una base SQLite cifrada con SQLCipher, un backend Flask y un panel React. La entrega final añade una <strong class="text-foreground">CA propia</strong> que emite el certificado TLS del servidor, el sellado AES-256-GCM del ZIP fuente, la supresión de grupos pequeños en el servidor con supresión complementaria, la revocación de sesiones, el bloqueo por IP, la retención de logs y el análisis de la implementación con Bandit, pip-audit, npm audit, gitleaks y 35 pruebas automatizadas, además de 20 comprobaciones en vivo sobre HTTPS. Las herramientas encontraron 4 alertas de Bandit y 15 vulnerabilidades en dependencias, y todas se corrigieron. También detectamos y respondimos a un incidente real: credenciales de demostración publicadas en el repositorio. La DPIA, las políticas, el plan de incidentes y las recomendaciones futuras completan la entrega.</p>
           </div>
         </section>
 
-        <!-- 2. Introducción y Caso de Negocio -->
+        <!-- 2. Introducción y caso de negocio -->
         <section id="sec-intro" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 02</div>
           <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">2. Introducción y caso de negocio</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <h3 class="text-sm font-semibold text-foreground">2.1 Problema y oportunidad</h3>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">2.1 Problema y oportunidad</h3>
             <p>En una operación de comercio electrónico, conocer solo el número total de pedidos no permite priorizar la revisión de demoras. Un indicador global puede ocultar diferencias entre estados o meses, mientras que una lista de pedidos individuales expondría datos que el analista no necesita. Se plantea una vista agregada que permita responder: ¿cuál fue la tasa de tardanza?, ¿en qué grupos históricos fue mayor?, y ¿cómo varió la calificación observada entre pedidos puntuales y tardíos?</p>
-            <h3 class="text-sm font-semibold text-foreground">2.2 Objetivos</h3>
-            <ul class="list-disc pl-5 space-y-1">
-              <li>Integrar el dataset Olist con una fuente complementaria verificable de feriados (Portaria n.º 468/2017).</li>
+            <p>El usuario previsto es un analista u operador que necesita orientar una investigación posterior. La aplicación no determina responsabilidades de vendedores, no predice plazos de entrega y no toma decisiones individuales sobre clientes. El dataset es histórico (compras de 2016 a 2018); no representa por sí solo el desempeño actual de Olist ni de otra tienda.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">2.2 Objetivos</h3>
+            <p><strong class="text-foreground">Objetivo general:</strong> diseñar y demostrar un sistema de análisis agregado de entregas tardías que aporte métricas reproducibles y aplique controles de seguridad proporcionales al caso académico.</p>
+            <ol class="list-decimal pl-5 space-y-1.5">
+              <li>Integrar el dataset Olist con una fuente complementaria verificable de feriados.</li>
               <li>Definir KPIs con denominadores explícitos y explorar variaciones por estado y mes.</li>
-              <li>Implementar una base de datos relacional cifrada, un backend seguro y una interfaz web con control de acceso.</li>
+              <li>Implementar una base de datos, un backend y una interfaz de consulta con acceso restringido.</li>
               <li>Demostrar controles de autenticación, auditoría, transporte HTTPS local y recuperación mediante respaldo cifrado.</li>
-              <li>Documentar riesgos, límites éticos, respuesta a incidentes y lecciones aprendidas.</li>
-            </ul>
+              <li>Documentar riesgos, límites éticos, respuesta a incidentes y mejoras futuras sin atribuir al prototipo garantías que no ofrece.</li>
+            </ol>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">2.3 Valor esperado y criterio de éxito</h3>
+            <p>El valor del panel es reducir el tiempo para ubicar segmentos que conviene examinar y evitar compartir filas individuales en la exploración inicial. Se mide mediante la disponibilidad de indicadores con definición reproducible, el filtrado por estado y la capacidad de restaurar una copia íntegra. La línea de base de 6.8 % describe el dataset; <strong class="text-foreground">no se fija una meta ficticia de reducción</strong> para datos históricos. Una meta operativa futura requeriría datos recientes, un período de comparación y acuerdo con el responsable del negocio.</p>
           </div>
         </section>
 
-        <!-- 3. Fuentes de Datos y Calidad -->
+        <!-- 3. Fuentes de datos, alcance y calidad -->
         <section id="sec-fuentes" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 03</div>
           <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">3. Fuentes de datos, alcance y calidad</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>El <em>Brazilian E-Commerce Public Dataset by Olist</em> reúne archivos CSV de pedidos, clientes, ítems y reseñas. La copia ZIP utilizada tiene SHA-256 <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">967E41E04FC306FE604E2A693F488995A8B41E5047418F8A5C8E4ABD6DECA784</code> y se conserva localmente en <code class="text-xs">data/olist.zip</code>, fuera del repositorio Git.</p>
-            <p>La segunda fuente es la <strong>Portaria n.º 468/2017</strong> de Brasil, integrando los feriados nacionales oficiales de 2018 para evaluar si las compras efectuadas en días feriados exhibían un comportamiento diferenciado.</p>
-
-            <div class="overflow-x-auto pt-2">
-              <table class="w-full text-left text-xs border border-border rounded-md overflow-hidden">
+            <h3 class="pt-2 text-sm font-semibold text-foreground">3.1 Dataset principal y fuente complementaria</h3>
+            <p>El <em>Brazilian E-Commerce Public Dataset by Olist</em> reúne archivos CSV de pedidos, clientes, ítems y reseñas. La copia ZIP utilizada en esta ejecución tiene SHA-256 <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground break-all">967E41E04FC306FE604E2A693F488995A8B41E5047418F8A5C8E4ABD6DECA784</code>. El archivo original se conserva localmente sellado con AES-256-GCM en <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">data/olist.zip.enc</code>, fuera del repositorio Git. El origen es público, pero ello no elimina los riesgos de reidentificación o uso fuera de contexto.</p>
+            <p>La segunda fuente es la Portaria brasileña n.º 468/2017, que publica los feriados nacionales de 2018. Se transcribieron nueve fechas nacionales a <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">holidays_2018.csv</code>; se excluyeron puntos facultativos y feriados estatales o municipales. La unión se hace por <em>fecha de compra</em>, no por fecha de entrega. Esta decisión es una hipótesis exploratoria y no implica que el feriado causara un retraso.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
                 <thead class="bg-secondary/60 text-muted-foreground uppercase">
-                  <tr>
-                    <th class="p-3 font-medium">Indicador</th>
-                    <th class="p-3 font-medium">Resultado</th>
-                    <th class="p-3 font-medium">Base de cálculo</th>
-                  </tr>
+                  <tr><th class="p-3 font-medium">Fuente</th><th class="p-3 font-medium">Uso en el proyecto</th><th class="p-3 font-medium">Campos relevantes</th></tr>
                 </thead>
                 <tbody class="divide-y divide-border">
-                  <tr>
-                    <td class="p-3 font-medium text-foreground">Pedidos analizados</td>
-                    <td class="p-3 font-mono text-foreground">96 470</td>
-                    <td class="p-3 text-muted-foreground">Entregados con fechas completas</td>
-                  </tr>
-                  <tr>
-                    <td class="p-3 font-medium text-foreground">Entregas tardías</td>
-                    <td class="p-3 font-mono text-foreground">6 534 (6.8 %)</td>
-                    <td class="p-3 text-muted-foreground">6 534 / 96 470</td>
-                  </tr>
-                  <tr>
-                    <td class="p-3 font-medium text-foreground">Retraso medio entre tardías</td>
-                    <td class="p-3 font-mono text-foreground">10.6 días</td>
-                    <td class="p-3 text-muted-foreground">Solo 6 534 pedidos demorados</td>
-                  </tr>
-                  <tr>
-                    <td class="p-3 font-medium text-foreground">Calificación media puntual</td>
-                    <td class="p-3 font-mono text-emerald-400">4.29 / 5</td>
-                    <td class="p-3 text-muted-foreground">89 443 reseñas disponibles</td>
-                  </tr>
-                  <tr>
-                    <td class="p-3 font-medium text-foreground">Calificación media tardía</td>
-                    <td class="p-3 font-mono text-foreground">2.27 / 5</td>
-                    <td class="p-3 text-muted-foreground">6 381 reseñas disponibles</td>
-                  </tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Olist: pedidos</td><td class="p-3 align-top text-muted-foreground">Selección de pedidos entregados y cálculo temporal</td><td class="p-3 align-top text-muted-foreground">Estado y fechas de compra, estimada y real</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Olist: clientes</td><td class="p-3 align-top text-muted-foreground">Agrupación geográfica amplia</td><td class="p-3 align-top text-muted-foreground">Estado federado</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Olist: reseñas</td><td class="p-3 align-top text-muted-foreground">Satisfacción observada</td><td class="p-3 align-top text-muted-foreground">Puntuación 1–5</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Portaria 468/2017</td><td class="p-3 align-top text-muted-foreground">Etiquetar compras en feriado nacional de 2018</td><td class="p-3 align-top text-muted-foreground">Fecha y nombre del feriado</td></tr>
                 </tbody>
               </table>
             </div>
+            <p class="text-xs text-zinc-500">Procedencia y uso de las fuentes.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">3.2 Selección y limitaciones del dato</h3>
+            <p>El importador conserva pedidos con estado <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">delivered</code>, fechas de compra, entrega estimada y entrega real, y estado del cliente disponibles. Del total de 99 441 pedidos, 96 478 constan como entregados; ocho de ellos no cumplen todos los campos necesarios. En consecuencia, se incluyen 96 470 y se excluyen 2 971 en total. El período de compra incluido va del 15 de septiembre de 2016 al 29 de agosto de 2018; los extremos de ambos años son parciales.</p>
+            <p>En la tabla importada faltan 646 puntuaciones de reseña (0.67 % del total). La media de reseñas puntuales usa 89 443 puntuaciones disponibles entre 89 936 pedidos puntuales; la de tardías usa 6 381 puntuaciones entre 6 534 pedidos tardíos. Los pedidos sin reseña siguen en el denominador de la tasa de tardanza, pero no en el promedio de puntuación. El importador toma la primera reseña que encuentra por pedido; por ello, no se asume que exista una única reseña por pedido. En las 96 470 filas importadas no se observaron fechas de entrega anteriores a la compra, puntuaciones fuera de 1–5 ni incoherencias entre el indicador de tardanza y la diferencia de fechas. Estos chequeos no sustituyen una auditoría completa del dataset.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">3.3 Definición de indicadores</h3>
+            <p>Se convierte cada marca temporal a fecha calendario. Para el pedido <em>i</em>, <em>d<sub>i</sub></em> es la diferencia en días entre fecha real y estimada y <em>t<sub>i</sub></em> = 1 si <em>d<sub>i</sub></em> &gt; 0; en otro caso <em>t<sub>i</sub></em> = 0. Al truncar a fecha, una entrega posterior dentro del mismo día estimado se considera puntual. Esta es una convención del prototipo que debe explicitarse al interpretar los resultados.</p>
+            <div class="rounded-md border border-border bg-background p-4 text-sm leading-6 text-muted-foreground"><span class="font-mono text-xs text-foreground">Tasa tardía = (Σ t<sub>i</sub> / N) × 100 &nbsp;&nbsp;·&nbsp;&nbsp; Retraso medio = Σ<sub>i: t<sub>i</sub>=1</sub> d<sub>i</sub> / Σ t<sub>i</sub></span></div>
+            <p>Las puntuaciones medias se calculan solo para los pedidos con <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">review_score</code> presente dentro de cada grupo. Los porcentajes se redondean a una cifra decimal para la presentación; el cálculo usa todos los registros incluidos.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Indicador</th><th class="p-3 font-medium">Resultado</th><th class="p-3 font-medium">Base de cálculo</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">Pedidos analizados</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">96 470</span></td><td class="p-3 align-top text-muted-foreground">Entregados y completos</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Entregas tardías</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">6 534; 6.8 %</span></td><td class="p-3 align-top text-muted-foreground">6 534 / 96 470</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Retraso medio entre tardías</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">10.6 días</span></td><td class="p-3 align-top text-muted-foreground">Solo 6 534 tardías</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Calificación media puntual</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-emerald-400">4.29 / 5</span></td><td class="p-3 align-top text-muted-foreground">89 443 reseñas</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Calificación media tardía</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">2.27 / 5</span></td><td class="p-3 align-top text-muted-foreground">6 381 reseñas</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Línea de base calculada desde la base SQLite del prototipo.</p>
           </div>
         </section>
 
-        <!-- 4. Análisis Descriptivo -->
+        <!-- 4. Análisis descriptivo y utilidad -->
         <section id="sec-analisis" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 04</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">4. Análisis descriptivo y utilidad para el negocio</h2>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">4. Análisis descriptivo y utilidad</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>El análisis regional muestra variaciones marcadas entre unidades federativas: estados como Alagoas (<code class="text-xs text-foreground">AL</code>) registraron 21.4 % de tardanza y Maranhão (<code class="text-xs text-foreground">MA</code>) 17.4 %, frente a tasas inferiores al 6 % en los estados del sureste (São Paulo y Paraná).</p>
-            <p>En 2018, 37 de los 641 pedidos comprados en feriado fueron tardíos (5.8 %). En días no feriados, fueron 4 041 de 52 136 (7.8 %). La comparación es descriptiva y no mide un efecto causal.</p>
+            <p>La tasa global sirve como referencia para leer las desagregaciones, no como una meta. Entre los estados con al menos 30 pedidos, las tasas más altas son <strong class="text-foreground">AL</strong> (21.4 %; 397 pedidos), <strong class="text-foreground">MA</strong> (17.4 %; 717) y <strong class="text-foreground">SE</strong> (15.2 %; 335). Entre los meses de compra con al menos 30 pedidos, destacan marzo de 2018 (19.0 %; 7 003 pedidos), febrero de 2018 (14.1 %; 6 555) y noviembre de 2017 (12.4 %; 7 288). Estos grupos son candidatos para investigación, no evidencia suficiente para atribuir la demora a una región, un vendedor o una fecha concreta.</p>
+            <p>En 2018 hay 641 pedidos comprados en feriado nacional, de los cuales 37 fueron tardíos (5.8 %). En los demás días del mismo año hay 52 136 pedidos y 4 041 tardíos (7.8 %). La comparación es desigual en tamaño y no controla por estacionalidad, estado, tipo de producto ni operador logístico; <strong class="text-foreground">no se interpreta como efecto causal</strong>. Cuando un grupo contiene menos de 30 pedidos, el servidor no envía su porcentaje: solo el tamaño de la muestra. Si se ocultara un único grupo, se oculta también otro para que no pueda deducirse por diferencia.</p>
           </div>
         </section>
 
-        <!-- 5. Requerimientos y Diseño Funcional -->
-        <section id="sec-requerimientos" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+        <!-- 5. Marco teórico -->
+        <section id="sec-marco" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 05</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">5. Requerimientos y diseño funcional</h2>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">5. Marco teórico</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>La arquitectura del sistema desacopla la capa de presentación de la capa de datos:</p>
-            <ul class="list-disc pl-5 space-y-1">
-              <li><strong class="text-foreground">Frontend:</strong> SPA reactiva desarrollada en React con TypeScript, Vite y componentes accesibles de shadcn/ui. Proporciona filtros dinámicos por estado sin recargar la página.</li>
-              <li><strong class="text-foreground">Backend:</strong> Servicio API en Python con Flask, implementando sesiones firmadas con HMAC, protección CSRF y cabeceras de endurecimiento (<code class="text-xs">Cache-Control: no-store</code>).</li>
-              <li><strong class="text-foreground">Capa de persistencia:</strong> SQLite operacional cifrado mediante SQLCipher con algoritmo AES-256 en modo CBC e índices optimizados en columnas de filtrado.</li>
-            </ul>
+            <p>El objetivo de seguridad de Olist Lab combina <strong class="text-foreground">confidencialidad</strong>, <strong class="text-foreground">integridad</strong> y <strong class="text-foreground">disponibilidad</strong>. La confidencialidad limita quién puede leer datos y registros. La integridad permite detectar cambios no autorizados en una copia. La disponibilidad requiere que el equipo pueda recuperar la base tras una pérdida. Usamos NIST CSF 2.0 como referencia para relacionar estas metas con identificación de riesgos, protección, detección, respuesta y recuperación.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">5.1 Cifrado y autenticación de copias</h3>
+            <p>SQLCipher cifra las páginas de la base con AES-256 y protege su integridad con HMAC según su configuración por defecto. Esto protege el archivo frente a lectura directa sin la clave. Para respaldos, AES-GCM cifra y autentica la copia. La etiqueta permite detectar alteraciones y el nonce debe ser único para cada cifrado con una misma clave. La prueba del final muestra que la aplicación admite una copia válida y rechaza una alterada.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">5.2 Hash de contraseñas y TLS</h3>
+            <p>Un hash de contraseñas con sal y costo de cómputo permite verificar una contraseña sin guardarla de forma recuperable. La sal dificulta reutilizar cálculos entre cuentas. TLS protege el tráfico en tránsito y puede autenticar al servidor si se valida su certificado. En la entrega final el certificado del servidor lo emite una CA propia del proyecto (RFC 5280); el cliente que instala esa raíz valida la cadena y el nombre del host, mientras que uno sin ella rechaza la conexión.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">5.3 Autenticación, autorización y trazabilidad</h3>
+            <p>La autenticación establece qué cuenta inició sesión. La autorización comprueba qué puede hacer esa cuenta. En Olist Lab, Flask permite a lectores consultar los indicadores y reserva la auditoría a administradores. Los eventos permiten reconstruir accesos, consultas y fallos. Su valor depende de limitar el acceso y acordar plazos de conservación.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">5.4 Minimización y reidentificación</h3>
+            <p>Quitamos los identificadores del cliente de las salidas y agrupamos los resultados. La vinculación por fechas, ubicación o identificadores persistentes puede permitir reidentificación si alguien dispone de otra fuente. Una agrupación pequeña también puede revelar información por inferencia. Por eso la DPIA evalúa el conjunto original, la base y la salida pública por separado.</p>
           </div>
         </section>
 
-        <!-- 6. Seguridad y Consideraciones Éticas -->
-        <section id="sec-seguridad" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+        <!-- 6. Requerimientos de seguridad -->
+        <section id="sec-req-seguridad" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 06</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">6. Seguridad y consideraciones éticas</h2>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">6. Requerimientos de seguridad</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>El diseño de seguridad responde a un modelo de amenazas local enfocado en la minimización de datos personales y la contención de accesos no autorizados:</p>
-            <ul class="list-disc pl-5 space-y-1">
-              <li><strong class="text-foreground">Cifrado en reposo:</strong> Se protegen las páginas de base de datos con clave de 256 bits, impidiendo la lectura directa del archivo de base con herramientas SQLite estándar.</li>
-              <li><strong class="text-foreground">Control de acceso basado en roles (RBAC):</strong> Separación entre <code class="text-xs text-foreground">admin</code> (acceso a panel y visor de auditoría), <code class="text-xs text-foreground">analyst</code> (acceso al panel con filtros) y <code class="text-xs text-foreground">reader</code> (consulta agregada básica, denegación estricta de auditoría con HTTP 403).</li>
-              <li><strong class="text-foreground">Trazabilidad de auditoría:</strong> Registro persistente de eventos clave (inicios de sesión, consultas analíticas con parámetros y accesos administrativos) con marcas de tiempo en UTC.</li>
-              <li><strong class="text-foreground">Principio ético de minimización:</strong> Se excluyeron intencionalmente del modelo relacional los nombres de clientes, domicilios exactos, prefijos postales y mensajes de texto libre de reseñas.</li>
-            </ul>
+            <p>La tabla resume cada requerimiento de seguridad, en qué entrega se implementó (<strong class="text-foreground">E1</strong>: avance; <strong class="text-foreground">EF</strong>: entrega final) y la evidencia reproducible. Las comprobaciones con <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pytest</code> se ejecutan sobre una instancia aislada con datos sintéticos; las de <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">verify_live</code> se ejecutan sobre la instancia real mediante HTTPS validado contra la CA propia (<a class="underline hover:text-foreground" href="#validacion">validación de extremo a extremo</a>).</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">ID</th><th class="p-3 font-medium">Requerimiento y control</th><th class="p-3 font-medium">Entrega</th><th class="p-3 font-medium">Evidencia observada</th><th class="p-3 font-medium">Alcance o límite</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S01</td><td class="p-3 align-top text-muted-foreground">Datos en reposo: base SQLCipher (AES-256 + HMAC por página); ZIP fuente sellado con AES-256-GCM; claves de 256 bits con permisos 0600 y carpeta configurable (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">OLIST_KEY_DIR</code>).</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">Cabecera no legible; una clave errónea no abre la base; ZIP en claro eliminado; 96 470 filas con la clave.</td><td class="p-3 align-top text-muted-foreground">Las claves siguen en el equipo de la demo salvo que se use otro volumen.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S02</td><td class="p-3 align-top text-muted-foreground">Datos en tránsito: HTTPS con certificado emitido por la CA propia del proyecto, TLS ≥ 1.2 y HSTS.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">EF</span></td><td class="p-3 align-top text-muted-foreground">TLS 1.3 (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">TLS_AES_256_GCM_SHA384</code>) verificado contra la CA; un cliente sin la CA rechaza la conexión.</td><td class="p-3 align-top text-muted-foreground">La CA es privada: solo los equipos que la instalen confían en ella.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S03</td><td class="p-3 align-top text-muted-foreground">Hash de contraseñas: scrypt con sal (Werkzeug); mínimo 12 caracteres con mayúsculas, minúsculas y dígito.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">Hashes únicos por cuenta; contraseñas débiles rechazadas.</td><td class="p-3 align-top text-muted-foreground">Sin MFA.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S04</td><td class="p-3 align-top text-muted-foreground">Gestión de accesos: sesión obligatoria, roles <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">admin</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">analyst</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">reader</code>, CSRF, sesión de 30 min, bloqueo por usuario (5) y por IP (20) en 15 min, cookies <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">Secure</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">HttpOnly</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">SameSite</code>, CSP.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">API sin sesión 401; panel 302; auditoría 403/200; sin CSRF 400; sexto intento 429.</td><td class="p-3 align-top text-muted-foreground">Los roles <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">analyst</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">reader</code> comparten permisos analíticos.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S05</td><td class="p-3 align-top text-muted-foreground">Registros de auditoría: ingresos, fallos, bloqueos, consultas, filtros inválidos, accesos denegados, CSRF rechazado y altas/bajas de usuarios; retención de 180 días.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">Eventos persistidos sin contraseñas; <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">purge-audit</code> elimina registros vencidos.</td><td class="p-3 align-top text-muted-foreground">Los logs están en la misma base; no hay SIEM.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S06</td><td class="p-3 align-top text-muted-foreground">Respaldo y recuperación: copia AES-256-GCM autenticada, rotación (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">--keep</code>), restauración con <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">integrity_check</code>.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">96 470 filas restauradas; una copia con un bit alterado se rechaza sin escribir salida.</td><td class="p-3 align-top text-muted-foreground">La copia debe guardarse fuera del equipo.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S07</td><td class="p-3 align-top text-muted-foreground">Herramientas de análisis: Bandit (SAST), pip-audit y npm audit (SCA), gitleaks (secretos), pytest y verificación en vivo; CI semanal.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">EF</span></td><td class="p-3 align-top text-muted-foreground">0 hallazgos tras corregir 4 B101, 3 B608 y 15 CVE de npm (<a class="underline hover:text-foreground" href="#sec-herramientas">tabla de herramientas</a>).</td><td class="p-3 align-top text-muted-foreground">No sustituye una prueba de penetración.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S08</td><td class="p-3 align-top text-muted-foreground">Uso seguro: política, procedimiento, concientización y formación del equipo.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground"><a class="underline hover:text-foreground" href="#sec-politicas">Políticas</a>; ejercicio de formación ejecutado sobre el <a class="underline hover:text-foreground" href="#incidente-real">incidente real</a>.</td><td class="p-3 align-top text-muted-foreground">El cumplimiento organizativo no se audita externamente.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S09</td><td class="p-3 align-top text-muted-foreground">Riesgos de una brecha y entidades afectadas.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">Modelo de amenazas y DPIA (<a class="underline hover:text-foreground" href="#amenazas">amenazas</a>, <a class="underline hover:text-foreground" href="#sec-dpia">DPIA</a>).</td><td class="p-3 align-top text-muted-foreground">Evaluación cualitativa.</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">S10</td><td class="p-3 align-top text-muted-foreground">Plan de respuesta ante incidentes y recomendaciones futuras.</td><td class="p-3 align-top text-muted-foreground"><span class="font-mono text-foreground">E1 / EF</span></td><td class="p-3 align-top text-muted-foreground">Plan NIST SP 800-61 aplicado a un caso real; <a class="underline hover:text-foreground" href="#sec-recomendaciones">recomendaciones</a>.</td><td class="p-3 align-top text-muted-foreground">Plazos legales no evaluados por un abogado.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Requerimientos de seguridad, entrega, evidencia y alcance.</p>
           </div>
-          <p class="mt-4 text-sm leading-6 text-muted-foreground">La evaluación de impacto distingue el ZIP fuente, los datos que se conservan en la base, los registros de operadores y los agregados del informe. El documento final explica por qué un identificador enlazable puede ser dato personal, qué información sensible podría aparecer en reseñas y cómo se evalúan el marco peruano y la LGPD brasileña.</p>
         </section>
 
-        <!-- 7. Políticas de Uso y Directrices -->
-        <section id="sec-politicas" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+        <!-- 7. Requerimientos y diseño de la solución -->
+        <section id="sec-diseno" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 07</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">7. Políticas de uso y directrices para colaboradores</h2>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">7. Requerimientos y diseño de la solución</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>Se establecieron normas estrictas de gobernanza en el repositorio para evitar fugas de información y garantizar la reproducibilidad académica:</p>
-            <ul class="list-disc pl-5 space-y-1">
-              <li>Exclusión permanente en <code class="text-xs font-mono text-foreground">.gitignore</code> de carpetas sensibles (<code class="text-xs">data/</code>, <code class="text-xs">instance/</code>), claves (<code class="text-xs">*.key</code>), bases (<code class="text-xs">*.db</code>) y respaldos (<code class="text-xs">*.enc</code>).</li>
-              <li>Cada desarrollador genera sus propias claves locales e inicializa su usuario administrador de forma independiente.</li>
-              <li>Prohibición estricta de comprometer contraseñas en claro o credenciales en el historial de Git.</li>
-            </ul>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">7.1 Requerimientos funcionales</h3>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">ID</th><th class="p-3 font-medium">Requerimiento y criterio observable</th><th class="p-3 font-medium">Entrega</th><th class="p-3 font-medium">Estado</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F1</td><td class="p-3 align-top text-muted-foreground">Importar las dos fuentes (Olist y feriados) y consultar agregados desde la base.</td><td class="p-3 align-top text-muted-foreground">E1</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F2</td><td class="p-3 align-top text-muted-foreground">Mostrar tasa tardía, retraso y reseñas; filtrar por estado y mostrar serie mensual.</td><td class="p-3 align-top text-muted-foreground">E1</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F3</td><td class="p-3 align-top text-muted-foreground">Comparar compras en feriado y día común, mostrando tamaños de grupo.</td><td class="p-3 align-top text-muted-foreground">E1</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F4</td><td class="p-3 align-top text-muted-foreground">Acceder con cuenta y restringir la auditoría al administrador.</td><td class="p-3 align-top text-muted-foreground">E1</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F5</td><td class="p-3 align-top text-muted-foreground">Respaldar y restaurar la información; contingencia ante desastres o ataques (base, ZIP fuente y código).</td><td class="p-3 align-top text-muted-foreground">E1 / EF</td><td class="p-3 align-top text-muted-foreground">Implementado; rotación y sellado del ZIP en EF</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F6</td><td class="p-3 align-top text-muted-foreground">Administrar cuentas por consola: alta, cambio de contraseña, baja, listado y purga de auditoría.</td><td class="p-3 align-top text-muted-foreground">EF</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F7</td><td class="p-3 align-top text-muted-foreground">Servir el panel por HTTPS con un certificado de la CA propia del proyecto.</td><td class="p-3 align-top text-muted-foreground">EF</td><td class="p-3 align-top text-muted-foreground">Implementado</td></tr>
+                  <tr><td class="p-3 align-top font-mono font-medium text-foreground">F8</td><td class="p-3 align-top text-muted-foreground">Consultar registros individuales o análisis por vendedor.</td><td class="p-3 align-top text-muted-foreground">—</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Descartado por la DPIA</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Requerimientos funcionales por entrega (E1: avance; EF: entrega final).</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">7.2 Planificación y ejecución</h3>
+            <p>Organizamos el trabajo en dos iteraciones, alineadas con las dos entregas del curso.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Iteración</th><th class="p-3 font-medium">Planificado</th><th class="p-3 font-medium">Ejecutado y decisiones</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">E1 (septiembre de 2026)</td><td class="p-3 align-top text-muted-foreground">Caso de negocio, importación mínima, panel, autenticación, auditoría, cifrado en reposo, respaldo, primera DPIA.</td><td class="p-3 align-top text-muted-foreground">SQLite migrada a SQLCipher; respaldo AES-256-GCM; Flask + React; HTTPS con un certificado temporal de Flask, reemplazado en la entrega final; primera pasada de Bandit con 3 alertas corregidas.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">EF (noviembre de 2026)</td><td class="p-3 align-top text-muted-foreground">Aplicar herramientas de seguridad, cerrar los riesgos residuales que la DPIA declaró, certificados digitales formales, evidencia reproducible.</td><td class="p-3 align-top text-muted-foreground">CA propia; ZIP sellado; identificador del vendedor retirado del importador; supresión en el servidor con complemento; revocación de sesiones; bloqueo por IP; retención de logs; SCA, gitleaks y CI; 35 pruebas y verificación en vivo; respuesta a un incidente real.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Plan y ejecución por iteración.</p>
+            <p>Usamos el repositorio de GitHub como fuente única, con commits convencionales y revisión de los cambios de seguridad antes de integrarlos. Al cerrar cada iteración, la lista de riesgos residuales de la DPIA se convirtió en la lista de tareas de la siguiente.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">7.3 Arquitectura y flujo</h3>
+            <p>El importador Python descifra en memoria el ZIP sellado y el CSV de feriados, selecciona las columnas necesarias y carga <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">deliveries</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">holidays</code> en SQLite cifrada con SQLCipher. Flask consulta agregados mediante SQL parametrizado, aplica la supresión de grupos pequeños y expone <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">/api/dashboard</code>. React consume esa respuesta y dibuja tarjetas, barras, una tabla mensual y un filtro. Flask conserva las páginas de ingreso y auditoría. La tabla <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">users</code> guarda credenciales con hash y rol, y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">audit_log</code> registra eventos. <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">backup.py</code> crea instantáneas cifradas y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py</code> administra la CA.</p>
+            <div class="rounded-md border border-border bg-background p-4 font-mono text-[11px] leading-6 text-zinc-300 sm:text-xs">
+              <div>ZIP Olist (sellado AES-GCM) + CSV feriados → importador → SQLCipher</div>
+              <div>Navegador (React) ⇄ <span class="text-zinc-500">(TLS 1.3, CA propia)</span> ⇄ Flask/API (sesión, roles, supresión k=30) ⇄ SQLCipher</div>
+              <div>SQLCipher → instantánea → respaldo AES-256-GCM con rotación <span class="text-zinc-500">·</span> Código: GitHub + espejo</div>
+            </div>
+            <p>El servidor se vincula únicamente a <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">127.0.0.1</code>. Existe un modo alternativo HTTP en el puerto 5001 para equipos que no puedan instalar la CA. Está limitado a la misma máquina y <strong class="text-foreground">no protege el tráfico</strong>.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">7.4 Minimización y ciclo de vida</h3>
+            <p>Por cada entrega se almacenan fechas, estado del cliente, puntuación disponible y variables derivadas. No se importan identificadores de cliente, pedido ni vendedor, nombre, ciudad, código postal, coordenadas, pagos ni texto de reseñas. El ZIP original se conserva sellado (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">data/olist.zip.enc</code>) y se elimina su versión en claro. La base, las claves, la CA y los respaldos están fuera del control de versiones. Al finalizar el curso se eliminarán el ZIP sellado, la base, los respaldos y la CA, y la CA se desinstalará de los equipos donde se haya instalado.</p>
           </div>
         </section>
 
-        <!-- 8. Respuesta ante Incidentes y Contingencia -->
-        <section id="sec-incidentes" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+        <!-- 8. Diseño de seguridad y ética -->
+        <section id="sec-seguridad" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
           <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 08</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">8. Respuesta ante incidentes y plan de contingencia</h2>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">8. Diseño de seguridad y ética</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <p>El plan de contingencia define procedimientos técnicos reproducibles mediante <code class="text-xs font-mono text-foreground">backup.py</code>:</p>
-            <ul class="list-disc pl-5 space-y-1">
-              <li><strong class="text-foreground">Generación de respaldo:</strong> Creación de una instantánea cifrada y autenticada con AES-256-GCM (<code class="text-xs">instance/copia.enc</code>), protegiendo la confidencialidad e integridad física de la copia.</li>
-              <li><strong class="text-foreground">Procedimiento de restauración:</strong> Desencriptación controlada y validación de consistencia estructural con <code class="text-xs font-mono text-foreground">PRAGMA integrity_check</code>, verificando la recuperación exacta de los 96 470 registros en una base de datos de contingencia.</li>
+            <h3 id="amenazas" class="pt-2 text-sm font-semibold text-foreground">8.1 Modelo de amenazas</h3>
+            <p>Los activos principales son la base operativa, los archivos de origen, los respaldos, las claves, la CA, las credenciales y los registros de auditoría. Los adversarios plausibles son un usuario no autorizado con acceso al equipo, un atacante en la red local que intercepte o suplante el servidor, un usuario legítimo que intente inferir datos individuales a partir de los agregados y un integrante que publique por error secretos o archivos.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Amenaza</th><th class="p-3 font-medium">Medida actual</th><th class="p-3 font-medium">Riesgo residual / medida futura</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">Lectura indebida de la base o del ZIP</td><td class="p-3 align-top text-muted-foreground">SQLCipher; ZIP sellado; claves 0600 en una carpeta separable; minimización</td><td class="p-3 align-top text-muted-foreground">Con acceso total al equipo y sus claves, el atacante descifra; usar KMS/HSM</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Robo de credenciales o sesión</td><td class="p-3 align-top text-muted-foreground">scrypt, CSRF, bloqueo por usuario e IP, sesión de 30 min revocable, cookies seguras</td><td class="p-3 align-top text-muted-foreground">Agregar MFA</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Intercepción o suplantación del servidor</td><td class="p-3 align-top text-muted-foreground">TLS ≥ 1.2 con la CA propia; HSTS</td><td class="p-3 align-top text-muted-foreground">La CA debe instalarse solo en equipos de la demo</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Inferencia sobre grupos pequeños</td><td class="p-3 align-top text-muted-foreground">Supresión k=30 en el servidor y supresión complementaria</td><td class="p-3 align-top text-muted-foreground">Ataques con consultas repetidas a otros filtros; evaluar privacidad diferencial</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Alteración o pérdida del respaldo</td><td class="p-3 align-top text-muted-foreground">AES-GCM autenticado, rotación, restauración verificada</td><td class="p-3 align-top text-muted-foreground">Copia fuera del equipo y pruebas periódicas</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Publicación accidental de secretos</td><td class="p-3 align-top text-muted-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">.gitignore</code>, gitleaks en CI, credenciales leídas del entorno</td><td class="p-3 align-top text-muted-foreground">Hook <em>pre-commit</em> y revisión obligatoria</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Amenazas, controles y límites observables.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">8.2 Protección en reposo</h3>
+            <p>Las contraseñas se procesan con scrypt (Werkzeug), con sal por cuenta, y se exigen al menos 12 caracteres con mayúsculas, minúsculas y dígitos. La base operativa usa SQLCipher 4 con una clave aleatoria de 256 bits. Si el archivo conserva una cabecera SQLite legible, la apertura normal se bloquea. El ZIP original se sella con AES-256-GCM: <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">magic</code> ‖ <em>nonce</em> de 96 bits ‖ texto cifrado y etiqueta, con el <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">magic</code> como dato asociado. El importador lo descifra en memoria. Las claves de base, respaldo y fuente son distintas, se crean con permisos 0600 y pueden ubicarse en otro volumen mediante <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">OLIST_KEY_DIR</code>. Una prueba automatizada verifica que una clave incorrecta no abre la base.</p>
+            <h3 id="certificados" class="pt-2 text-sm font-semibold text-foreground">8.3 Certificados digitales y protección en tránsito</h3>
+            <p>En el avance usábamos un certificado temporal generado por Flask en cada arranque, que no podía validarse. En la entrega final implementamos una <strong class="text-foreground">CA propia</strong> (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py</code>):</p>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><strong class="text-foreground">CA raíz</strong> “Olist Lab Root CA”: ECDSA P-384, SHA-384, 5 años, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">BasicConstraints CA=true, pathlen=0</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">KeyUsage keyCertSign, cRLSign</code>. Su clave privada se guarda en PKCS#8 cifrado con una frase de paso aleatoria.</li>
+              <li><strong class="text-foreground">Certificado del servidor</strong>: ECDSA P-256, firmado por la CA, 397 días (límite que aceptan los navegadores), SAN <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">localhost</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">127.0.0.1</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">::1</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">ExtendedKeyUsage serverAuth</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">CA=false</code>.</li>
+              <li><strong class="text-foreground">Servidor</strong>: contexto TLS con versión mínima 1.2. En la prueba negoció TLS 1.3 con <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">TLS_AES_256_GCM_SHA384</code>. Agregamos <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">Strict-Transport-Security</code> a las respuestas HTTPS.</li>
             </ul>
+            <p>Un cliente que tiene instalada la CA valida la cadena y el nombre del host sin advertencias. Uno que no la tiene rechaza la conexión. Ambos comportamientos se comprueban automáticamente. Esa es la propiedad buscada: la confianza depende de una decisión explícita, no de ignorar advertencias. <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">py pki.py show</code> imprime las huellas SHA-256 para comprobarlas al instalar la CA.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">8.4 Gestión de accesos y registros de auditoría</h3>
+            <p>El backend reconoce los roles <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">admin</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">analyst</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">reader</code>. Los tres ven el panel agregado y solo <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">admin</code> accede a <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">/audit</code>. En cada solicitud la sesión se revalida contra la base: si la cuenta se borra o cambia su rol o su contraseña, las sesiones abiertas se revocan. Las sesiones expiran tras 30 minutos de inactividad. El ingreso se bloquea durante 15 minutos tras 5 fallos por usuario o 20 por IP, lo que limita tanto la fuerza bruta como el <em>password spraying</em>. Las cuentas se administran solo por consola y no hay registro web.</p>
+            <p>El registro almacena la fecha UTC, la cuenta y la acción: ingreso, fallo, bloqueo, salida, consulta, filtro inválido, acceso denegado, CSRF rechazado, sesión revocada y cambios de cuentas. Nunca guarda contraseñas. La política de retención es de 180 días y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">py app.py purge-audit</code> elimina los eventos vencidos, dejando a su vez constancia de la purga.</p>
           </div>
         </section>
 
-        <!-- 9. IMPLEMENTACIÓN Y EVIDENCIAS VISUALES (Rubric Critical) -->
-        <section id="sec-evidencias" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
-          <div class="border-b border-border pb-3">
-            <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 09</div>
-            <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">9. Implementación y evidencias visuales</h2>
-          </div>
-
-          <p class="mt-4 text-sm leading-6 text-muted-foreground">
-            Las siguientes capturas documentan la verificación visual de la plataforma en funcionamiento, el comportamiento reactivo de los filtros analíticos, la efectividad del control de acceso RBAC y las pruebas técnicas de seguridad en consola. <span class="text-xs text-zinc-500 font-mono">(Haz clic en cualquier captura para ampliar)</span>
-          </p>
-
-          <!-- Figura 1 -->
-          <div class="mt-6 rounded-lg border border-border bg-background p-4 sm:p-5">
-            <div class="flex items-center justify-between gap-2">
-              <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">1</span>
-                Panel General: KPIs y Detalle de Fuentes
-              </h3>
-              <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Vista global</span>
-            </div>
-
-            <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
-              <img src="fig1_kpi_general.png" alt="Figura 1: Panel general de Olist Lab" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 1: Panel general y fuentes')">
-            </div>
-
-            <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
-              <p><strong class="text-foreground">Detalle y validación:</strong> Interfaz interactiva desplegada en React tras autenticarse con el usuario administrador (<code class="text-xs text-foreground">marco · admin</code>). Exhibe los 4 KPIs clave: <strong>6.8 %</strong> de entregas tardías, <strong>96 470</strong> pedidos analizados, <strong>10.6 días</strong> de retraso promedio y calificaciones de <strong>4.29/5</strong> (puntual) vs. <strong>2.27/5</strong> (tardía), además de la comparación regional y el pie con las fuentes oficiales. Esta vista confirma que los datos se presentan agregados, sin exponer nombres, direcciones ni identificadores de clientes.</p>
-            </div>
-          </div>
-
-          <!-- Figura 2 -->
-          <div class="mt-6 rounded-lg border border-border bg-background p-4 sm:p-5">
-            <div class="flex items-center justify-between gap-2">
-              <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">2</span>
-                Filtro por Estado: Reactividad y Consistencia Analítica
-              </h3>
-              <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Estado MA</span>
-            </div>
-
-            <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
-              <img src="fig2_filtro_estado.png" alt="Figura 2: Filtro por estado MA" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 2: Filtro por estado MA')">
-            </div>
-
-            <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
-              <p><strong class="text-foreground">Detalle y validación:</strong> Al aplicar el filtro para el estado de Maranhão (<code class="text-xs text-foreground">MA</code>), la aplicación actualiza las cifras mediante la API: el total de pedidos analizados pasa a 717, la tasa de tardanza sube a 17.4 % (125 entregas tardías), el retraso medio se sitúa en 10.5 días y la satisfacción desciende a 4.17/5 (puntuales) y 2.18/5 (tardíos). La tabla mensual inferior se ajusta automáticamente para mostrar únicamente la serie temporal de este estado, mostrando que el filtro actualiza los agregados del backend.</p>
-            </div>
-          </div>
-
-          <div class="mt-6 rounded-lg border border-border bg-background p-4 sm:p-5">
-            <h3 class="text-sm font-semibold text-foreground">Resultados de la verificación final</h3>
-            <ul class="mt-2 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-              <li>Auditoría: 403 para lector y 200 para administrador. Se comprobaron hashes de cuentas desechables, inicio de sesión y persistencia de eventos.</li>
-              <li>Respaldo: 96 470 entregas recuperadas y verificación de integridad correcta. El respaldo alterado fue rechazado antes de crear la salida.</li>
-              <li>Transporte: TLS 1.3 en la interfaz local con un certificado autofirmado de prueba.</li>
-              <li>Análisis estático: tres alertas B608 en la primera pasada y cero después de usar consultas fijas con parámetros en los cinco módulos revisados.</li>
-            </ul>
-            <p class="mt-4 text-sm"><a class="underline" href="Informe_Olist_Final_Tipo2.pdf">Informe final con marco teórico, requerimientos de seguridad y DPIA</a></p>
-          </div>
-        </section>
-
-        <!-- 10. Recomendaciones Futuras -->
-        <section id="sec-recomendaciones" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
-          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 10</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">10. Recomendaciones de protección futura</h2>
+        <!-- 9. Estrategia de uso seguro, políticas y formación -->
+        <section id="sec-politicas" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 09</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">9. Estrategia de uso seguro, políticas y formación</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <h3 class="pt-2 text-sm font-semibold text-foreground">9.1 Política del equipo</h3>
             <ol class="list-decimal pl-5 space-y-1.5">
-              <li><strong class="text-foreground">Custodia externa de secretos:</strong> En la configuración actual, la clave criptográfica se almacena en el mismo sistema de archivos que la base operativa. Para un entorno productivo se debe integrar un gestor de secretos dedicado (HashiCorp Vault o AWS Secrets Manager) con políticas de rotación periódica.</li>
-              <li><strong class="text-foreground">Certificados TLS de CA pública:</strong> Migrar del certificado temporal autofirmado a certificados validados por una autoridad de certificación reconocida (Let's Encrypt), eliminando advertencias en clientes y garantizando confidencialidad en redes abiertas.</li>
-              <li><strong class="text-foreground">Definición de RPO y RTO:</strong> Establecer objetivos formales de tiempo de recuperación y punto de recuperación coordinados con las áreas operativas del negocio.</li>
+              <li><strong class="text-foreground">Finalidad:</strong> usar los datos solo para el proyecto académico y el análisis agregado. Se prohíben decisiones individuales sobre compradores o vendedores.</li>
+              <li><strong class="text-foreground">Acceso:</strong> una cuenta individual por integrante con el rol mínimo necesario. No se comparten contraseñas ni sesiones, y se cierra sesión al terminar.</li>
+              <li><strong class="text-foreground">Secretos:</strong> ninguna contraseña, clave o certificado privado se escribe en el código. Los scripts leen las credenciales de variables de entorno y la CI ejecuta gitleaks.</li>
+              <li><strong class="text-foreground">Almacenamiento y publicación:</strong> no se suben a servicios públicos el ZIP, la base, las claves, los respaldos ni capturas con filas individuales. Antes de publicar se revisan <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">git status</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">git diff --cached</code>.</li>
+              <li><strong class="text-foreground">Transferencia:</strong> se comparten solo el informe y el código. La CA se instala únicamente en los equipos de la demo.</li>
+              <li><strong class="text-foreground">Retención:</strong> los logs se conservan 180 días; los archivos locales, hasta el cierre del curso. Después se eliminan y se desinstala la CA.</li>
+              <li><strong class="text-foreground">Uso analítico:</strong> se muestran denominadores y se advierte que correlación, feriados y diferencias geográficas no prueban causas.</li>
+            </ol>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">9.2 Procedimiento, concientización y formación</h3>
+            <p>Antes de cada presentación revisamos el modo del servidor, la cuenta utilizada, las rutas del repositorio y las capturas previstas. Para formarnos realizamos un ejercicio sobre un caso real: el <a class="underline hover:text-foreground" href="#incidente-real">incidente de credenciales publicadas</a>. En él (1) reconocimos el secreto expuesto, (2) aplicamos el plan de respuesta, (3) restauramos un respaldo y verificamos su integridad, y (4) distinguimos el HTTP local del HTTPS validado por la CA. La lección que acordamos es que <em>borrar un archivo no borra su historial</em>: la única mitigación efectiva para un secreto publicado es rotarlo.</p>
+          </div>
+        </section>
+
+        <!-- 10. Respuesta ante incidentes y recuperación -->
+        <section id="sec-incidentes" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 10</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">10. Respuesta ante incidentes y recuperación</h2>
+          <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <h3 class="pt-2 text-sm font-semibold text-foreground">10.1 Plan básico</h3>
+            <p>Consideramos incidentes la pérdida de la base, la publicación accidental de datos, claves o credenciales, el acceso no autorizado y la alteración de resultados. El plan sigue a grandes rasgos NIST SP 800-61 Rev. 3.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Fase</th><th class="p-3 font-medium">Acción del equipo</th><th class="p-3 font-medium">Evidencia / resultado esperado</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">Detección</td><td class="p-3 align-top text-muted-foreground">Quien observe el incidente avisa al otro integrante y registran la hora UTC, el sistema afectado y la señal observada. Fuentes: auditoría (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">login_blocked</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">access_denied</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">csrf_rejected</code>), CI, alertas de Dependabot.</td><td class="p-3 align-top text-muted-foreground">Ficha del incidente, sin copiar secretos.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Contención</td><td class="p-3 align-top text-muted-foreground">Detener el servicio si procede, aislar el equipo, retirar publicaciones, rotar contraseñas (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">set-password</code>, que revoca las sesiones) o borrar cuentas (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">delete-user</code>).</td><td class="p-3 align-top text-muted-foreground">Registro de acciones y horas.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Análisis</td><td class="p-3 align-top text-muted-foreground">Revisar logs, el historial de Git y el alcance de lo expuesto; distinguir pérdida, acceso y divulgación.</td><td class="p-3 align-top text-muted-foreground">Alcance provisional e incertidumbres explícitas.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Recuperación</td><td class="p-3 align-top text-muted-foreground">Restaurar el último respaldo íntegro (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">backup.py restore</code>), verificar el número de filas, renovar claves o reemitir el certificado (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py server</code>).</td><td class="p-3 align-top text-muted-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">integrity_check = ok</code>; <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">verify_live</code> 20/20.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Comunicación</td><td class="p-3 align-top text-muted-foreground">Informar al profesor y a los responsables; evaluar con asesoría las obligaciones legales si hubiera datos personales (Ley 29733, LGPD).</td><td class="p-3 align-top text-muted-foreground">Comunicación precisa, sin afirmar ausencia de daño antes de investigar.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Mejora</td><td class="p-3 align-top text-muted-foreground">Documentar la causa, las correcciones y una nueva prueba.</td><td class="p-3 align-top text-muted-foreground">Lección aprendida y control nuevo.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Plan de respuesta ante incidentes.</p>
+            <h3 id="incidente-real" class="pt-2 text-sm font-semibold text-foreground">10.2 Caso real: credenciales de demostración publicadas</h3>
+            <dl class="space-y-3 rounded-md border border-border bg-background p-4">
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Detección</dt><dd class="mt-1">Al revisar el código para la entrega final encontramos que <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">frontend/generate_screenshots.js</code>, publicado en el commit <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">861221a</code> de un repositorio público, contenía en texto plano las contraseñas de las cuentas locales <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">marco</code> (admin) y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">lector</code>. gitleaks no lo detectó.</dd></div>
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Análisis</dt><dd class="mt-1">Las cuentas solo existen en la base local y el servidor escucha en <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">127.0.0.1</code>, así que la explotación requería acceso al equipo. No hubo exposición de datos de clientes. Aun así, el secreto debe tratarse como comprometido, porque permanece en el historial.</dd></div>
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Contención y recuperación</dt><dd class="mt-1">Rotamos ambas contraseñas con valores aleatorios, guardados fuera del repositorio. Reescribimos el script para que lea las credenciales del entorno y añadimos la revocación de sesiones al cambiar una contraseña. No reescribimos el historial compartido: con las contraseñas ya rotadas, no reduce el riesgo y sí afecta al otro integrante.</dd></div>
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Mejora</dt><dd class="mt-1">Añadimos gitleaks a la CI, la regla 3 de la política y la revisión de <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">git diff --cached</code> antes de cada commit.</dd></div>
+            </dl>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">10.3 Contingencia y respaldo</h3>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><strong class="text-foreground">Base:</strong> <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">py backup.py backup instance/backups/AAAAMMDD.enc --keep 7</code> crea una copia autenticada y conserva las 7 más recientes. La restauración se hace siempre a otra ruta y verifica la integridad. Una copia con un solo bit alterado se rechaza.</li>
+              <li><strong class="text-foreground">ZIP fuente:</strong> se conserva sellado y es descargable de nuevo desde Kaggle, comprobando su SHA-256.</li>
+              <li><strong class="text-foreground">Código:</strong> está en GitHub, con un espejo en la cuenta del segundo integrante y un clon local por integrante. <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">git bundle</code> permite generar una copia completa sin conexión.</li>
+              <li><strong class="text-foreground">Claves y CA:</strong> si se pierde <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">db.key</code>, la base es irrecuperable <em>por diseño</em>. Por eso la clave se respalda por separado, fuera del equipo. Si se pierde la CA, se reemite con <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py init</code> y se reinstala en los clientes.</li>
+            </ul>
+            <p>En una operación real se definirían con el negocio los objetivos RPO y RTO (punto y tiempo de recuperación), y las copias se almacenarían fuera del sitio.</p>
+          </div>
+        </section>
+
+        <!-- 11. Implementación y evidencias visuales -->
+        <section id="sec-evidencias" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 11</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">11. Implementación y evidencias visuales</h2>
+          <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <h3 class="pt-2 text-sm font-semibold text-foreground">11.1 Componentes desarrollados</h3>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Archivo</th><th class="p-3 font-medium">Responsabilidad</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">import_data.py</code></td><td class="p-3 align-top text-muted-foreground">Importación mínima desde el ZIP sellado y los feriados.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">db_crypto.py</code></td><td class="p-3 align-top text-muted-foreground">Conexión SQLCipher, rutas y custodia de claves.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">app.py</code></td><td class="p-3 align-top text-muted-foreground">Autenticación, sesión, roles, API con supresión, auditoría y administración por consola.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py</code></td><td class="p-3 align-top text-muted-foreground">CA propia, certificado del servidor, validación y contexto TLS.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">backup.py</code></td><td class="p-3 align-top text-muted-foreground">Respaldo, restauración, rotación y sellado del ZIP.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">migrate_db.py</code></td><td class="p-3 align-top text-muted-foreground">Migración de SQLite en claro a SQLCipher (avance).</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">frontend/src/App.tsx</code></td><td class="p-3 align-top text-muted-foreground">Panel React con componentes shadcn/ui.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">tests/</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">scripts/</code></td><td class="p-3 align-top text-muted-foreground">35 pruebas, verificación en vivo, escaneo de seguridad y capturas.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Componentes del sistema.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">11.2 Evidencias visuales del prototipo</h3>
+            <p class="text-xs text-zinc-500 font-mono">(Haz clic en cualquier captura para ampliarla)</p>
+            <div class="mt-4 rounded-lg border border-border bg-background p-4 sm:p-5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">1</span>
+                  Panel general servido por HTTPS
+                </h3>
+                <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Vista global</span>
+              </div>
+              <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
+                <img src="fig1_kpi_general.png" alt="Figura 1: Panel general servido por HTTPS" loading="lazy" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 1: Panel general servido por HTTPS')">
+              </div>
+              <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
+                <p><strong class="text-foreground">Contenido:</strong> cuatro indicadores, ranking por estado y serie mensual. La vista muestra 96 470 pedidos, 6.8 % de tardanza (6 534), 10.6 días de retraso medio entre los tardíos y una calificación de 4.29 frente a 2.27. No se exponen nombres, direcciones ni identificadores.</p>
+              </div>
+            </div>
+            <div class="mt-4 rounded-lg border border-border bg-background p-4 sm:p-5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">2</span>
+                  Filtro por Maranhão (MA)
+                </h3>
+                <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Estado MA</span>
+              </div>
+              <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
+                <img src="fig2_filtro_estado.png" alt="Figura 2: Filtro por Maranhão (MA)" loading="lazy" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 2: Filtro por Maranhão (MA)')">
+              </div>
+              <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
+                <p><strong class="text-foreground">Contenido:</strong> al filtrar por Maranhão (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">MA</code>), el panel muestra 717 pedidos y 17.4 % de tardanza, calculados por la API en el servidor.</p>
+              </div>
+            </div>
+            <div class="mt-4 rounded-lg border border-border bg-background p-4 sm:p-5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">3</span>
+                  Auditoría visible solo para el administrador
+                </h3>
+                <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Roles · 403</span>
+              </div>
+              <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
+                <img src="fig3_auditoria_rbac.png" alt="Figura 3: Auditoría y control de acceso por roles" loading="lazy" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 3: Auditoría y control de acceso por roles')">
+              </div>
+              <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
+                <p><strong class="text-foreground">Contenido:</strong> la página de auditoría solo es accesible para el rol <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">admin</code> y registra el acceso denegado (403) del lector.</p>
+              </div>
+            </div>
+            <h3 id="validacion" class="pt-4 text-sm font-semibold text-foreground">11.3 Validación de extremo a extremo</h3>
+            <p><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">scripts/verify_live.py</code> levanta el servidor real con el certificado de la CA propia, crea dos cuentas desechables con contraseñas aleatorias que nunca se imprimen, ejecuta solicitudes HTTPS reales y elimina las cuentas al terminar. La figura 4 reproduce su salida sin edición. Las <strong class="text-foreground">20 comprobaciones</strong> fueron correctas: cifrado y minimización de la base, sellado del ZIP, TLS 1.3 verificado, rechazo de clientes sin la CA, HSTS, control de sesión, CSRF, hash, roles, indicadores (96 470 general; 717 en MA), validación de entrada, supresión de grupos pequeños, bloqueo por fuerza bruta, auditoría y restauración con detección de alteraciones.</p>
+            <div class="mt-4 rounded-lg border border-border bg-background p-4 sm:p-5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <span class="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">4</span>
+                  Salida real de verify_live.py
+                </h3>
+                <span class="rounded border border-border bg-secondary px-2 py-0.5 text-xs text-muted-foreground">20/20 · HTTPS</span>
+              </div>
+              <div class="mt-3 overflow-hidden rounded-md border border-border bg-zinc-950">
+                <img src="fig4_seguridad_recuperacion.png" alt="Figura 4: Salida real de scripts/verify_live.py sobre la instancia de la demo" loading="lazy" class="zoomable-img w-full object-cover" onclick="openLightbox(this.src, 'Figura 4: Salida real de scripts/verify_live.py sobre la instancia de la demo')">
+              </div>
+              <div class="mt-3 space-y-1.5 text-xs leading-5 text-muted-foreground">
+                <p><strong class="text-foreground">Fuente:</strong> salida sin edición de <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">scripts/verify_live.py</code> sobre la instancia de la demo (texto en <a class="underline hover:text-foreground" href="https://github.com/ronaljcb/proyecto-etica-seguridad-olist/blob/main/informe/evidencias/verificacion-final.txt" target="_blank" rel="noopener noreferrer">informe/evidencias/verificacion-final.txt</a>). Resultado: 20 comprobaciones correctas, 0 fallidas.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12. Análisis de la implementación con herramientas de seguridad -->
+        <section id="sec-herramientas" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 12</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">12. Análisis de la implementación con herramientas de seguridad</h2>
+          <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>A diferencia del avance, la entrega final exige aplicar herramientas de seguridad para analizar la implementación. Combinamos análisis estático (SAST), análisis de composición de software (SCA), búsqueda de secretos y pruebas automatizadas. Todo se ejecuta con un solo comando, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">scripts/security_scan.sh</code>, y además en GitHub Actions (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">.github/workflows/security.yml</code>) en cada <em>push</em> y cada lunes, para detectar vulnerabilidades publicadas después de la entrega. Dependabot propone actualizaciones semanales de dependencias.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Herramienta</th><th class="p-3 font-medium">Tipo</th><th class="p-3 font-medium">Hallazgo</th><th class="p-3 font-medium">Corrección</th><th class="p-3 font-medium">Final</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">Bandit 1.9</td><td class="p-3 align-top text-muted-foreground">SAST</td><td class="p-3 align-top text-muted-foreground">3 × B608 (SQL dinámico) en el panel, primera pasada.</td><td class="p-3 align-top text-muted-foreground">Consultas fijas con parámetros con nombre.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">0</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Bandit 1.9</td><td class="p-3 align-top text-muted-foreground">SAST</td><td class="p-3 align-top text-muted-foreground">4 × B101 en <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">pki.py</code>: la validación del certificado usaba <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">assert</code>, que <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">python -O</code> elimina; 1 × B105 (falso positivo).</td><td class="p-3 align-top text-muted-foreground">Validaciones explícitas que lanzan <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">ValueError</code>.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">0 en 859 líneas</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">npm audit</td><td class="p-3 align-top text-muted-foreground">SCA JS</td><td class="p-3 align-top text-muted-foreground">15 vulnerabilidades (7 altas) en dependencias de producción: <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">undici</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">hono</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">zod</code>, <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">systeminformation</code>, arrastradas por el CLI <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">shadcn</code> y el paquete <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">cn</code>.</td><td class="p-3 align-top text-muted-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">shadcn</code> pasa a desarrollo; <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">cn</code> se reemplaza por 3 líneas propias; <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">npm audit fix</code>.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">0</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">pip-audit</td><td class="p-3 align-top text-muted-foreground">SCA Python</td><td class="p-3 align-top text-muted-foreground">Sin vulnerabilidades conocidas en Flask, cryptography y sqlcipher3.</td><td class="p-3 align-top text-muted-foreground">—</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">0</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">gitleaks 8</td><td class="p-3 align-top text-muted-foreground">Secretos</td><td class="p-3 align-top text-muted-foreground">Sin alertas en el historial, pero la revisión manual halló dos contraseñas de demo en un script (<a class="underline hover:text-foreground" href="#incidente-real">caso real</a>).</td><td class="p-3 align-top text-muted-foreground">Credenciales leídas del entorno y rotadas.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Invalidadas</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">pytest</td><td class="p-3 align-top text-muted-foreground">Pruebas</td><td class="p-3 align-top text-muted-foreground">35 pruebas de S01–S06, P01 y F1–F3 sobre datos sintéticos, incluidas la revocación de sesiones y la supresión complementaria.</td><td class="p-3 align-top text-muted-foreground">—</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">35/35</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground"><code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">verify_live</code></td><td class="p-3 align-top text-muted-foreground">E2E HTTPS</td><td class="p-3 align-top text-muted-foreground">20 comprobaciones sobre la instancia real con TLS validado por la CA.</td><td class="p-3 align-top text-muted-foreground">—</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">20/20</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Herramientas aplicadas, hallazgos y correcciones. Reportes en <a class="underline hover:text-foreground" href="https://github.com/ronaljcb/proyecto-etica-seguridad-olist/tree/main/informe/evidencias" target="_blank" rel="noopener noreferrer">informe/evidencias/</a>.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">12.1 Tres aprendizajes</h3>
+            <ol class="list-decimal pl-5 space-y-1.5">
+              <li><strong class="text-foreground">La mayor superficie de riesgo no estaba en nuestro código, sino en dependencias:</strong> un CLI de desarrollo declarado como dependencia de producción arrastraba un servidor HTTP y un SDK completos.</li>
+              <li><strong class="text-foreground">Bandit detectó un error sutil en código nuevo:</strong> un <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">assert</code> de seguridad desaparece con optimizaciones.</li>
+              <li><strong class="text-foreground">Ninguna herramienta reemplaza la revisión humana:</strong> gitleaks no marcó contraseñas legibles porque no coinciden con sus patrones genéricos.</li>
             </ol>
           </div>
         </section>
 
-        <!-- 11. Retrospectiva del Equipo -->
-        <section id="sec-retrospectiva" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
-          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 11</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">11. Lecciones aprendidas y retrospectiva del equipo</h2>
+        <!-- 13. Evaluación de Impacto en la Protección de Datos (DPIA) -->
+        <section id="sec-dpia" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 13</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">13. Evaluación de Impacto en la Protección de Datos (DPIA)</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-            <h3 class="text-sm font-semibold text-foreground">11.1 Lecciones técnicas y analíticas</h3>
-            <p>La principal lección técnica es que un dataset público puede contener columnas innecesarias para responder la pregunta de negocio. Definir primero el denominador del KPI permitió importar menos campos y detectar los 646 pedidos sin reseña. La comparación con feriados mostró que una cifra atractiva puede ser engañosa cuando los tamaños de grupo son muy distintos. En seguridad, restaurar una copia aportó evidencia más contundente que solo generar el archivo cifrado; asimismo, evidenció el límite de custodiar la clave en el mismo equipo.</p>
-            <h3 class="text-sm font-semibold text-foreground">11.2 Retrospectiva del trabajo conjunto</h3>
-            <p>El proyecto fue desarrollado conjuntamente por Ronal Jesus Condor Blas y Marco Soto Maceda. Como mejoras de trabajo en equipo para proyectos futuros se propone:</p>
-            <ul class="list-disc pl-5 space-y-1">
-              <li>Llevar un registro estructurado de decisiones técnicas y de arquitectura para mantener la trazabilidad de cada cambio.</li>
-              <li>Establecer un flujo sistemático de revisión cruzada de código (<em>peer review</em>) antes de integrar cambios en el importador y en los controles de acceso.</li>
-              <li>Ejecutar pruebas conjuntas periódicas para verificar la restauración de respaldos y el comportamiento ante incidentes.</li>
-              <li>Formalizar una lista de verificación previa a la entrega para constatar la exclusión de claves y la vigencia de la documentación técnica.</li>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">13.1 Alcance, flujo y necesidad</h3>
+            <p>Esta evaluación cubre el prototipo académico local y la publicación de su informe. Los afectados potenciales son los compradores representados en el conjunto histórico, los vendedores, los operadores cuyas cuentas y acciones quedan en auditoría y el propio equipo. El equipo gestiona el entorno de demostración; el profesor recibe el informe y presencia la demo.</p>
+            <p>El flujo va desde el ZIP de Olist y el calendario de feriados hasta la importación, la base cifrada, la API de agregados, el panel y el respaldo. Para comparar entregas se necesitan fechas, estado federado y puntuaciones. En el avance conservábamos el identificador del vendedor (<code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">seller_id</code>) “para una posible ampliación”; la DPIA concluyó que no era necesario para la finalidad, y en la entrega final <strong class="text-foreground">lo retiramos del importador</strong>. Hoy la base no contiene identificadores de clientes, pedidos ni vendedores. El registro de auditoría requiere un identificador de cuenta, una acción y una marca de tiempo; la IP se guarda solo en la tabla de intentos fallidos y se borra tras 24 horas.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">13.2 Clasificación de datos y alcance normativo</h3>
+            <p>La revisión de cabeceras identificó los campos que se indican a continuación. No inspeccionamos exhaustivamente el contenido de las reseñas ni atribuimos categorías sensibles a personas concretas. Clasificamos los datos según su posibilidad de vincularse con una persona natural y el daño que produciría su divulgación.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Etapa</th><th class="p-3 font-medium">Campos o ejemplos</th><th class="p-3 font-medium">Clasificación y tratamiento</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">ZIP fuente</td><td class="p-3 align-top text-muted-foreground">Identificadores de clientes, pedidos y vendedores, ciudad, prefijo postal, coordenadas por prefijo, fechas, valor y tipo de pago, título y texto de reseña.</td><td class="p-3 align-top text-muted-foreground">Los identificadores y los atributos enlazables pueden identificar indirectamente. Importes, ubicación y comentarios merecen acceso restringido. Los comentarios pueden revelar datos sensibles si el usuario menciona, por ejemplo, información de salud. No se importan.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Base operativa</td><td class="p-3 align-top text-muted-foreground">Identificador secuencial interno, fechas de compra, estimada y de entrega, estado federado, puntuación y retraso.</td><td class="p-3 align-top text-muted-foreground">Datos transaccionales de uso interno. Sin identificadores de clientes, pedidos ni vendedores (el de vendedor se retiró en la entrega final). Se excluyen coordenadas, pagos y texto libre. Cifrada con SQLCipher.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Cuentas y auditoría</td><td class="p-3 align-top text-muted-foreground">Usuario, rol, hash de contraseña, marca UTC y acción.</td><td class="p-3 align-top text-muted-foreground">Datos de operadores y material de autenticación de acceso restringido. El nombre de cuenta puede identificar a un integrante y el registro revela su actividad. Los hashes y claves no se publican.</td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Panel e informe</td><td class="p-3 align-top text-muted-foreground">Tasas y recuentos por estado, mes y feriado.</td><td class="p-3 align-top text-muted-foreground">Agregados de menor riesgo. El servidor suprime grupos menores de 30 y aplica supresión complementaria para impedir deducirlos por diferencia; la interfaz no recibe esos valores.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Clasificación por etapa del tratamiento.</p>
+            <p><strong class="text-foreground">Perú.</strong> Si desde Perú se tratan datos de personas identificadas o identificables, corresponde evaluar la Ley N.º 29733 y el D. S. N.º 016-2024-JUS según quién decide la finalidad y dónde se realiza el tratamiento. En el proyecto esto afecta especialmente el uso local del ZIP enlazable y los registros de operadores. Una fecha o un prefijo postal pueden contribuir a identificar a alguien sin pertenecer por sí solos a una categoría sensible. La ley peruana incluye, entre otros, los datos sobre salud, origen racial o étnico e ingresos económicos en su definición de datos sensibles. El monto de un pedido no mide el ingreso económico del comprador. Antes de ampliar el uso deben evaluarse la base aplicable, los avisos, la retención y el ejercicio de derechos.</p>
+            <p><strong class="text-foreground">Brasil.</strong> El artículo 3 de la LGPD exige evaluar las conexiones territoriales del tratamiento, incluida la recolección en Brasil. El origen brasileño y la disponibilidad pública justifican revisar la procedencia y la posibilidad de identificar titulares. El artículo 4.II.b remite a los artículos 7 y 11 para el tratamiento con fines exclusivamente académicos. El artículo 5 distingue el dato personal del sensible, y el artículo 12 considera la posibilidad de revertir la anonimización con medios razonables. En consecuencia, tratamos el ZIP y los registros vinculables como material restringido. Cualquier ampliación exige comprobar la base de tratamiento de cada conjunto, especialmente si contiene información sensible en texto libre.</p>
+            <p><strong class="text-foreground">Decisión de publicación.</strong> Publicamos el informe, sus indicadores agregados y capturas con datos de demostración. El ZIP, las filas de la base, las claves y los logs de usuarios reales quedan fuera de la publicación. La DPIA documenta una evaluación académica de alcance y riesgos. La determinación formal del régimen aplicable y de los responsables corresponde a quienes definan un uso ulterior.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">13.3 Riesgos y controles</h3>
+            <p>Usamos una valoración cualitativa de probabilidad e impacto. Un riesgo alto exige tratamiento antes de ampliar el alcance; uno medio requiere seguimiento; uno bajo se acepta para la demo local mientras se mantengan sus controles.</p>
+            <div class="overflow-x-auto pt-1">
+              <table class="w-full min-w-[560px] text-left text-xs border border-border rounded-md overflow-hidden">
+                <thead class="bg-secondary/60 text-muted-foreground uppercase">
+                  <tr><th class="p-3 font-medium">Riesgo</th><th class="p-3 font-medium">Afectados</th><th class="p-3 font-medium">Inicial</th><th class="p-3 font-medium">Controles (E1 + EF)</th><th class="p-3 font-medium">Residual</th></tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  <tr><td class="p-3 align-top font-medium text-foreground">Exposición del ZIP o de las claves</td><td class="p-3 align-top text-muted-foreground">Compradores, vendedores, operadores</td><td class="p-3 align-top text-muted-foreground">Alto</td><td class="p-3 align-top text-muted-foreground">Minimización, SQLCipher, ZIP sellado y borrado en claro, claves 0600 con carpeta separable, exclusión de Git, respaldo cifrado.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Medio-bajo</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Reidentificación por grupos pequeños o cruces</td><td class="p-3 align-top text-muted-foreground">Compradores, vendedores</td><td class="p-3 align-top text-muted-foreground">Alto</td><td class="p-3 align-top text-muted-foreground">Solo agregados; supresión k=30 <em>en el servidor</em>, no solo en la interfaz; sin identificadores en la base.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Bajo</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Exposición de cuentas y trazas</td><td class="p-3 align-top text-muted-foreground">Equipo, operadores</td><td class="p-3 align-top text-muted-foreground">Alto</td><td class="p-3 align-top text-muted-foreground">scrypt, roles, sesión de 30 min, bloqueo por usuario e IP, retención de 180 días; contraseñas filtradas rotadas.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Medio</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Interpretación injusta de indicadores</td><td class="p-3 align-top text-muted-foreground">Vendedores, regiones, operadores logísticos</td><td class="p-3 align-top text-muted-foreground">Medio</td><td class="p-3 align-top text-muted-foreground">Denominadores visibles; advertencias de causalidad, cobertura temporal y reseñas ausentes.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Bajo</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Pérdida de datos o del material de recuperación</td><td class="p-3 align-top text-muted-foreground">Equipo, continuidad</td><td class="p-3 align-top text-muted-foreground">Alto</td><td class="p-3 align-top text-muted-foreground">Respaldo autenticado, rotación, restauración verificada, código en dos repositorios remotos.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Medio</strong></td></tr>
+                  <tr><td class="p-3 align-top font-medium text-foreground">Suplantación del servidor (MITM local)</td><td class="p-3 align-top text-muted-foreground">Usuarios del panel</td><td class="p-3 align-top text-muted-foreground">Medio</td><td class="p-3 align-top text-muted-foreground">CA propia, TLS ≥ 1.2, HSTS; un cliente sin la CA rechaza la conexión.</td><td class="p-3 align-top text-muted-foreground"><strong class="text-foreground">Bajo</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-zinc-500">Riesgos, afectados y riesgo residual tras la entrega final.</p>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">13.4 Consideraciones éticas</h3>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><strong class="text-foreground">Consentimiento y finalidad.</strong> Que el conjunto sea público no implica que los compradores hayan consentido cualquier uso. Limitamos la finalidad a un análisis académico agregado y prohibimos en la política decisiones individuales sobre compradores o vendedores.</li>
+              <li><strong class="text-foreground">Sesgo y equidad.</strong> Las tasas por estado reflejan distancia, infraestructura y operadores, no la “calidad” de una región ni de sus habitantes. Las reseñas solo existen para quien decidió escribirlas; quien no reseña queda fuera del promedio, lo que puede sesgar la satisfacción observada. Por eso el panel muestra denominadores y el informe evita lenguaje causal.</li>
+              <li><strong class="text-foreground">Transparencia.</strong> El panel indica fuentes, período y supresión de grupos pequeños; el informe documenta qué campos se excluyen y cómo se calcula cada indicador; el código y las pruebas son públicos y reproducibles.</li>
+              <li><strong class="text-foreground">Responsabilidad propia.</strong> El <a class="underline hover:text-foreground" href="#incidente-real">incidente de credenciales</a> mostró que un equipo pequeño también puede exponer secretos. Lo documentamos en lugar de ocultarlo.</li>
             </ul>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">13.5 Decisión y seguimiento</h3>
+            <p>Aceptamos el riesgo residual para la demo local con datos históricos y la publicación de agregados. Antes de cualquier uso con datos reales o usuarios externos deberá reevaluarse esta DPIA: si se añaden datos, cambian los destinatarios o se despliega el backend fuera del equipo. El informe no registra consulta a afectados ni aprobación para un despliegue real.</p>
           </div>
         </section>
 
-        <!-- 12. Conclusiones y Referencias -->
+        <!-- 14. Recomendaciones de protección futura -->
+        <section id="sec-recomendaciones" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 14</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">14. Recomendaciones de protección futura</h2>
+          <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <p>Las siguientes medidas no se implementaron en esta entrega. Las recomendamos porque reducen riesgos residuales concretos:</p>
+            <ol class="list-decimal pl-5 space-y-1.5">
+              <li><strong class="text-foreground">Custodia de claves en KMS/HSM o en el llavero del sistema:</strong> hoy las claves pueden separarse en otro volumen, pero un atacante con control total del equipo las obtiene. Un KMS añade control de acceso, rotación y auditoría propios.</li>
+              <li><strong class="text-foreground">MFA (TOTP o WebAuthn):</strong> mitiga el robo de contraseñas, el único factor actual.</li>
+              <li><strong class="text-foreground">Servidor WSGI de producción tras un proxy inverso, con certificado de una CA pública:</strong> el servidor de Werkzeug es de desarrollo, y una CA pública evita instalar una raíz privada en cada cliente.</li>
+              <li><strong class="text-foreground">Privacidad diferencial para los agregados:</strong> la supresión k=30 no protege frente a muchas consultas combinadas. Añadir ruido calibrado, por ejemplo con OpenDP, daría garantías formales.</li>
+              <li><strong class="text-foreground">Centralización de logs (SIEM) e integridad de la auditoría:</strong> enviar los eventos a un almacén de solo anexado evita que un administrador comprometido los borre.</li>
+              <li><strong class="text-foreground">Respaldos fuera del sitio con RPO y RTO pactados y pruebas trimestrales de restauración.</strong></li>
+              <li><strong class="text-foreground">Hook <em>pre-commit</em> con gitleaks y reglas propias</strong> para cadenas con forma de contraseña, que la regla genérica no detecta.</li>
+              <li><strong class="text-foreground">Roles diferenciados:</strong> dar a <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">analyst</code> y <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">reader</code> permisos distintos (por ejemplo, exportación) con un principio de mínimo privilegio documentado.</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- 15. Lecciones aprendidas y retrospectiva del equipo -->
+        <section id="sec-retrospectiva" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 15</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">15. Lecciones aprendidas y retrospectiva del equipo</h2>
+          <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
+            <h3 class="pt-2 text-sm font-semibold text-foreground">15.1 Lecciones técnicas, analíticas y de seguridad</h3>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><strong class="text-foreground">Definir el KPI antes de importar</strong> permitió dejar fuera casi todos los campos personales. Retirar <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">seller_id</code> demostró que “por si acaso” no es una finalidad.</li>
+              <li><strong class="text-foreground">La supresión en la interfaz no es un control.</strong> En el avance, la API devolvía la cifra que el panel ocultaba. Llevarla al servidor y añadir la supresión complementaria cerró el canal de inferencia.</li>
+              <li><strong class="text-foreground">Las dependencias son la mayor superficie de ataque.</strong> Las 15 vulnerabilidades vinieron de un CLI de desarrollo mal clasificado, no de nuestro código.</li>
+              <li><strong class="text-foreground">Las herramientas complementan la revisión humana, no la sustituyen.</strong> Bandit encontró un <code class="rounded bg-secondary px-1.5 py-0.5 text-xs font-mono text-foreground">assert</code> peligroso y gitleaks no detectó contraseñas reales.</li>
+              <li><strong class="text-foreground">Restaurar es la prueba de un respaldo.</strong> Generar el archivo cifrado no basta: hay que restaurarlo y alterarlo a propósito.</li>
+              <li><strong class="text-foreground">Un certificado autofirmado sin CA enseña a ignorar advertencias.</strong> La CA propia convierte la confianza en una decisión explícita.</li>
+            </ul>
+            <h3 class="pt-2 text-sm font-semibold text-foreground">15.2 Retrospectiva del equipo</h3>
+            <dl class="space-y-3 rounded-md border border-border bg-background p-4">
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Qué funcionó</dt><dd class="mt-1">Usar la DPIA como lista de tareas entre iteraciones, documentar honestamente los límites y automatizar la evidencia: las cifras del informe salen de scripts, no de capturas manuales.</dd></div>
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Qué no funcionó</dt><dd class="mt-1">En el avance usamos credenciales reales en scripts de prueba y una figura de terminal compuesta a mano; ambas cosas restaron confiabilidad a la evidencia. Los controles de privacidad se pensaron primero en la interfaz y no en la API.</dd></div>
+              <div><dt class="text-xs font-semibold uppercase tracking-wider text-foreground">Qué haremos distinto</dt><dd class="mt-1">Configurar la CI y los hooks de secretos desde el primer commit; escribir la prueba de cada requerimiento al mismo tiempo que el control; revisar entre ambos todo cambio de seguridad y registrar las decisiones de arquitectura.</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <!-- 16. Conclusiones y referencias -->
         <section id="sec-conclusiones" class="reveal-on-scroll interactive-card rounded-lg border border-border bg-card p-6 sm:p-7">
-          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 12</div>
-          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">12. Conclusiones y referencias</h2>
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sección 16</div>
+          <h2 class="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">16. Conclusiones y referencias</h2>
           <div class="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
             <p>El prototipo responde al caso de negocio con métricas históricas verificables y una interfaz agregada. La línea de base de 6.8 % de entregas tardías y la diferencia de puntuaciones permiten priorizar preguntas para una investigación logística posterior, pero no establecen causas ni metas operativas actuales. La integración de feriados añade una segunda fuente y demuestra por qué los grupos pequeños y las comparaciones no controladas requieren cautela.</p>
-            <p>En materia de seguridad, la solución implementa controles visibles de autenticación, roles, auditoría, base operativa cifrada con SQLCipher, HTTPS local y respaldo cifrado con restauración. El informe distingue estas condiciones de la hoja de ruta futura. Por ello, el resultado es una <strong>demostración académica funcional</strong>, no un sistema listo para operar con datos personales reales en producción.</p>
-
+            <p>En materia de seguridad cumplimos los requerimientos de la entrega final con evidencia reproducible:</p>
+            <ul class="list-disc pl-5 space-y-1.5">
+              <li><strong class="text-foreground">Cifrado en reposo y en tránsito:</strong> SQLCipher para la base, AES-GCM para el ZIP y los respaldos, y TLS 1.3 con un certificado de la CA propia.</li>
+              <li><strong class="text-foreground">Credenciales y accesos:</strong> hash scrypt, roles, sesiones revocables y una auditoría con retención.</li>
+              <li><strong class="text-foreground">Herramientas de análisis:</strong> sus hallazgos se corrigieron.</li>
+              <li><strong class="text-foreground">Respuesta a incidentes:</strong> un plan que aplicamos a un caso real.</li>
+            </ul>
+            <p>Persisten límites que reconocemos: las claves residen en el equipo de la demo, la CA es privada y el servidor es de desarrollo. El resultado es una <strong class="text-foreground">demostración académica funcional y verificable</strong>, no un sistema listo para operar con datos personales reales en producción.</p>
             <div class="border-t border-border pt-4 text-xs">
-              <div class="font-medium text-foreground">Referencias bibliográficas:</div>
-              <ul class="mt-2 space-y-1 text-muted-foreground">
-                <li>• Olist & Kaggle. <em>Brazilian E-Commerce Public Dataset by Olist</em>. SHA-256: <code class="font-mono text-foreground">967e41e0...</code></li>
-                <li>• Ministério do Planejamento, Desenvolvimento e Gestão de Brasil. <em>Portaria n.º 468, de 22 de dezembro de 2017</em>. Feriados e pontos facultativos de 2018.</li>
-              </ul>
+              <div class="font-medium text-foreground">Referencias</div>
+              <ol class="mt-2 list-decimal space-y-1.5 pl-5 text-muted-foreground">
+                <li>Curso DS3031. <em>Esquema Proyecto de Ética y Seguridad de Datos (Final) – Tipo 2</em>. Material de clase proporcionado por el profesor.</li>
+                <li>Olist. <em>Brazilian E-Commerce Public Dataset by Olist</em>. Kaggle. <a class="underline break-all hover:text-foreground" href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank" rel="noopener noreferrer">https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce</a>. Consulta: septiembre de 2026.</li>
+                <li>Ministério do Planejamento, Desenvolvimento e Gestão de Brasil. <em>Portaria n.º 468, de 22 de dezembro de 2017</em>. <a class="underline break-all hover:text-foreground" href="https://www.gov.br/agricultura/pt-br/mailing/documentos/portaria-mpog-feriados-2018.pdf" target="_blank" rel="noopener noreferrer">https://www.gov.br/agricultura/pt-br/mailing/documentos/portaria-mpog-feriados-2018.pdf</a>. Consulta: septiembre de 2026.</li>
+                <li>Autoridad Nacional de Protección de Datos Personales. <em>Decreto Supremo N.º 016-2024-JUS: Reglamento de la Ley N.º 29733</em>. <a class="underline break-all hover:text-foreground" href="https://www.gob.pe/institucion/anpd/normas-legales/6554453-n-016-2024-jus" target="_blank" rel="noopener noreferrer">https://www.gob.pe/institucion/anpd/normas-legales/6554453-n-016-2024-jus</a>. Consulta: septiembre de 2026.</li>
+                <li>National Institute of Standards and Technology. <em>The NIST Cybersecurity Framework (CSF) 2.0</em>, 2024. <a class="underline break-all hover:text-foreground" href="https://www.nist.gov/cyberframework" target="_blank" rel="noopener noreferrer">https://www.nist.gov/cyberframework</a>. Consulta: septiembre de 2026.</li>
+                <li>National Institute of Standards and Technology. <em>SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management</em>, 2025. <a class="underline break-all hover:text-foreground" href="https://csrc.nist.gov/pubs/sp/800/61/r3/final" target="_blank" rel="noopener noreferrer">https://csrc.nist.gov/pubs/sp/800/61/r3/final</a>. Consulta: septiembre de 2026.</li>
+                <li>Congreso de la República del Perú. <em>Ley N.º 29733, Ley de Protección de Datos Personales</em>. <a class="underline break-all hover:text-foreground" href="https://www.gob.pe/institucion/congreso-de-la-republica/normas-legales/243470-29733" target="_blank" rel="noopener noreferrer">https://www.gob.pe/institucion/congreso-de-la-republica/normas-legales/243470-29733</a>.</li>
+                <li>Presidência da República do Brasil. <em>Lei n.º 13.709/2018, Lei Geral de Proteção de Dados Pessoais, texto compilado</em>. <a class="underline break-all hover:text-foreground" href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm" target="_blank" rel="noopener noreferrer">https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm</a>.</li>
+                <li>Zetetic. <em>SQLCipher Design</em>. <a class="underline break-all hover:text-foreground" href="https://www.zetetic.net/sqlcipher/design/" target="_blank" rel="noopener noreferrer">https://www.zetetic.net/sqlcipher/design/</a>.</li>
+                <li>NIST. <em>SP 800-38D: Galois/Counter Mode (GCM) and GMAC</em>. <a class="underline break-all hover:text-foreground" href="https://csrc.nist.gov/pubs/sp/800/38/d/final" target="_blank" rel="noopener noreferrer">https://csrc.nist.gov/pubs/sp/800/38/d/final</a>.</li>
+                <li>OWASP. <em>Password Storage Cheat Sheet</em>. <a class="underline break-all hover:text-foreground" href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html</a>.</li>
+                <li>A. Hundepool et al. <em>Statistical Disclosure Control</em>. Wiley, 2012.</li>
+                <li>IETF. <em>RFC 5280: Internet X.509 Public Key Infrastructure Certificate and CRL Profile</em>. <a class="underline break-all hover:text-foreground" href="https://www.rfc-editor.org/rfc/rfc5280" target="_blank" rel="noopener noreferrer">https://www.rfc-editor.org/rfc/rfc5280</a>.</li>
+                <li>IETF. <em>The Transport Layer Security Protocol Version 1.3</em>. <a class="underline break-all hover:text-foreground" href="https://www.rfc-editor.org/info/rfc8446/" target="_blank" rel="noopener noreferrer">https://www.rfc-editor.org/info/rfc8446/</a>.</li>
+              </ol>
             </div>
           </div>
         </section>
