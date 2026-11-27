@@ -14,9 +14,9 @@ La revisión de cabeceras identificó los campos que se indican a continuación.
 \midrule
 \endhead
 ZIP fuente & Identificadores de clientes, pedidos y vendedores, ciudad, prefijo postal, coordenadas por prefijo, fechas, valor y tipo de pago, título y texto de reseña. & Los identificadores y los atributos enlazables pueden identificar indirectamente. Importes, ubicación y comentarios merecen acceso restringido. Los comentarios pueden revelar datos sensibles si el usuario menciona, por ejemplo, información de salud. No se importan.\\
-Base operativa & Identificador secuencial interno, fechas de compra y entrega, estado, identificador del vendedor, puntuación y retraso. & Datos transaccionales restringidos por posibilidad de cruce. El identificador de vendedor puede vincularse a una persona si opera como particular. Se excluyen coordenadas, pagos y texto libre.\\
+Base operativa & Identificador secuencial interno, fechas de compra, estimada y de entrega, estado federado, puntuación y retraso. & Datos transaccionales de uso interno. Sin identificadores de clientes, pedidos ni vendedores (el de vendedor se retiró en la entrega final). Se excluyen coordenadas, pagos y texto libre. Cifrada con SQLCipher.\\
 Cuentas y auditoría & Usuario, rol, hash de contraseña, marca UTC y acción. & Datos de operadores y material de autenticación de acceso restringido. El nombre de cuenta puede identificar a un integrante y el registro revela su actividad. Los hashes y claves no se publican.\\
-Panel e informe & Tasas y recuentos por estado, mes y feriado. & Agregados con menor riesgo. La comparación regional y la serie mensual filtran grupos menores de 30. El panel oculta la tasa de feriados con muestras pequeñas, aunque la API conserva esa salida agregada. Antes de ampliar la difusión se debe revisar el riesgo de inferencia.\\
+Panel e informe & Tasas y recuentos por estado, mes y feriado. & Agregados de menor riesgo. El servidor suprime grupos menores de 30 y aplica supresión complementaria para impedir deducirlos por diferencia; la interfaz no recibe esos valores.\\
 \bottomrule
 \end{longtable}
 }
