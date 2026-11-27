@@ -1,4 +1,9 @@
-"""Copia y restaura la base SQLite con cifrado autenticado AES-GCM."""
+"""Respaldo y restauración de la base con cifrado autenticado AES-256-GCM.
+
+Comandos:
+  py backup.py backup instance/backups/copia.enc
+  py backup.py restore instance/backups/copia.enc --destination instance/restaurada.db
+"""
 import argparse
 import os
 import sqlite3
@@ -6,30 +11,48 @@ import tempfile
 from contextlib import closing
 from pathlib import Path
 
+from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from db_crypto import DB, SQLITE_HEADER, connect
+from db_crypto import DB, KEY_DIR, SQLITE_HEADER, connect, load_key, private_dir
 
-ROOT = Path(__file__).resolve().parent
-INSTANCE = ROOT / "instance"
-KEY = INSTANCE / "backup.key"
+KEY = KEY_DIR / "backup.key"
 MAGIC = b"OLIST-BACKUP-v1\n"
+NONCE = 12
+TAG = 16
 
 
 def get_key():
-    if not KEY.exists():
-        KEY.parent.mkdir(exist_ok=True)
-        KEY.write_bytes(AESGCM.generate_key(bit_length=256))
-    key = KEY.read_bytes()
-    if len(key) != 32:
-        raise ValueError("Clave de respaldo inválida")
-    return key
+    return load_key(KEY, create=True)
+
+
+def seal(data, key, magic):
+    """Formato: magic || nonce(12) || ciphertext+tag. El magic va como dato asociado."""
+    nonce = os.urandom(NONCE)
+    return magic + nonce + AESGCM(key).encrypt(nonce, data, magic)
+
+
+def unseal(content, key, magic):
+    if not content.startswith(magic) or len(content) < len(magic) + NONCE + TAG:
+        raise ValueError("Formato de archivo cifrado inválido")
+    offset = len(magic)
+    try:
+        return AESGCM(key).decrypt(content[offset:offset + NONCE], content[offset + NONCE:], magic)
+    except InvalidTag as exc:
+        raise ValueError("El archivo fue alterado o la clave no corresponde (etiqueta GCM inválida)") from exc
+
+
+def write_private(path, data):
+    path = Path(path)
+    private_dir(path.parent)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(data)
 
 
 def backup(destination):
     if not DB.exists():
         raise FileNotFoundError(DB)
     destination = Path(destination)
-    destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as temp:
         snapshot = Path(temp) / "snapshot.db"
         with DB.open("rb") as stream:
@@ -37,40 +60,37 @@ def backup(destination):
         opener = sqlite3.connect if legacy else connect
         with closing(opener(DB)) as source, closing(opener(snapshot)) as target:
             source.backup(target)
-        nonce = os.urandom(12)
-        ciphertext = AESGCM(get_key()).encrypt(nonce, snapshot.read_bytes(), MAGIC)
-        destination.write_bytes(MAGIC + nonce + ciphertext)
+        write_private(destination, seal(snapshot.read_bytes(), get_key(), MAGIC))
     print(f"Respaldo cifrado: {destination}")
 
 
 def restore(source, destination):
-    content = Path(source).read_bytes()
-    if not content.startswith(MAGIC) or len(content) < len(MAGIC) + 28:
-        raise ValueError("Formato de respaldo inválido")
-    offset = len(MAGIC)
-    data = AESGCM(get_key()).decrypt(content[offset:offset+12], content[offset+12:], MAGIC)
+    data = unseal(Path(source).read_bytes(), get_key(), MAGIC)
     destination = Path(destination)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(data)
+    write_private(destination, data)
     legacy = data.startswith(SQLITE_HEADER)
     opener = sqlite3.connect if legacy else connect
     with closing(opener(destination)) as db:
         result = db.execute("PRAGMA integrity_check").fetchone()[0]
+        count = db.execute("SELECT count(*) FROM deliveries").fetchone()[0] if result == "ok" else 0
     if result != "ok":
         destination.unlink(missing_ok=True)
         raise ValueError("La base restaurada no pasó integrity_check")
-    print(f"Restauración comprobada: {destination}")
+    print(f"Restauración comprobada: {destination} · integrity_check=ok · {count} entregas")
     if legacy:
         print("Respaldo anterior a SQLCipher: la base restaurada está en texto claro; migra antes de usarla.")
+    return count
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", choices=["backup", "restore"])
-    parser.add_argument("path", help="Archivo .enc")
+    parser.add_argument("path", nargs="?", help="Archivo .enc (backup/restore)")
     parser.add_argument("--destination", help="Ruta de restauración; obligatoria para restore")
     args = parser.parse_args()
-    if args.command == "backup":
+    if not args.path:
+        parser.error(f"{args.command} requiere la ruta del archivo .enc")
+    elif args.command == "backup":
         backup(args.path)
     elif not args.destination:
         parser.error("restore requiere --destination")
