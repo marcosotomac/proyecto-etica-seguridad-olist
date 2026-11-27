@@ -1,8 +1,9 @@
-"""Respaldo y restauración de la base con cifrado autenticado AES-256-GCM.
+"""Respaldo, restauración y sellado del ZIP fuente con cifrado autenticado AES-256-GCM.
 
 Comandos:
   py backup.py backup instance/backups/copia.enc [--keep 7]
   py backup.py restore instance/backups/copia.enc --destination instance/restaurada.db
+  py backup.py seal-source [--delete-plain]    # cifra data/olist.zip -> data/olist.zip.enc
 """
 import argparse
 import os
@@ -13,11 +14,15 @@ from pathlib import Path
 
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from db_crypto import DB, INSTANCE, KEY_DIR, SQLITE_HEADER, connect, load_key, private_dir
+from db_crypto import DB, INSTANCE, KEY_DIR, ROOT, SQLITE_HEADER, connect, load_key, private_dir
 
 KEY = KEY_DIR / "backup.key"
+SOURCE_KEY = KEY_DIR / "source.key"
 BACKUP_DIR = INSTANCE / "backups"
+SOURCE_ZIP = ROOT / "data" / "olist.zip"
+SEALED_ZIP = ROOT / "data" / "olist.zip.enc"
 MAGIC = b"OLIST-BACKUP-v1\n"
+SOURCE_MAGIC = b"OLIST-SOURCE-v1\n"
 NONCE = 12
 TAG = 16
 
@@ -93,14 +98,41 @@ def restore(source, destination):
     return count
 
 
+def seal_source(delete_plain=False):
+    """Cifra el ZIP original para que no permanezca legible en disco."""
+    if not SOURCE_ZIP.exists():
+        raise SystemExit(f"No existe {SOURCE_ZIP}")
+    plain = SOURCE_ZIP.read_bytes()
+    key = load_key(SOURCE_KEY, create=True)
+    write_private(SEALED_ZIP, seal(plain, key, SOURCE_MAGIC))
+    if unseal(SEALED_ZIP.read_bytes(), key, SOURCE_MAGIC) != plain:
+        raise RuntimeError("La verificación del ZIP sellado falló")
+    print(f"ZIP fuente sellado y verificado: {SEALED_ZIP}")
+    if delete_plain:
+        SOURCE_ZIP.unlink()
+        print("ZIP en claro eliminado. import_data.py usará la versión sellada.")
+
+
+def open_source():
+    """Devuelve los bytes del ZIP original, preferentemente desde la versión sellada."""
+    if SEALED_ZIP.exists():
+        return unseal(SEALED_ZIP.read_bytes(), load_key(SOURCE_KEY), SOURCE_MAGIC)
+    if SOURCE_ZIP.exists():
+        return SOURCE_ZIP.read_bytes()
+    raise SystemExit(f"Falta {SOURCE_ZIP} o {SEALED_ZIP}. Descarga el ZIP original de Olist.")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["backup", "restore"])
+    parser.add_argument("command", choices=["backup", "restore", "seal-source"])
     parser.add_argument("path", nargs="?", help="Archivo .enc (backup/restore)")
     parser.add_argument("--destination", help="Ruta de restauración; obligatoria para restore")
     parser.add_argument("--keep", type=int, help="Rotación: conservar solo las N copias más recientes")
+    parser.add_argument("--delete-plain", action="store_true", help="seal-source: borra el ZIP en claro tras verificar")
     args = parser.parse_args()
-    if not args.path:
+    if args.command == "seal-source":
+        seal_source(args.delete_plain)
+    elif not args.path:
         parser.error(f"{args.command} requiere la ruta del archivo .enc")
     elif args.command == "backup":
         backup(args.path, args.keep)
