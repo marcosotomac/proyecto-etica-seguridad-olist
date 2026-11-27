@@ -1,0 +1,6 @@
+Cabecera operativa no corresponde a SQLite en claro
+Respaldo cifrado: archivo temporal
+Restauracion comprobada: archivo temporal
+Restauracion: 96470 entregas
+Sin sesion: 302; auditoria lector/admin: 403/200
+Filtro general/MA/ZZ: 96470/717/0; formato invalido: 400

@@ -125,26 +125,25 @@ def dashboard_api():
     state = request.args.get('state', '').upper().strip()
     if state and (len(state) != 2 or not state.isalpha()):
         abort(400)
-    where = 'WHERE customer_state = ?' if state else ''
-    params = (state,) if state else ()
+    params = {'state': state or None}
     with connect() as db:
-        summary = db.execute(f"""SELECT count(*) n, sum(is_late) late,
+        summary = db.execute("""SELECT count(*) n, sum(is_late) late,
             round(100.0 * avg(is_late), 1) late_pct,
             round(avg(CASE WHEN is_late=1 THEN delay_days END), 1) avg_delay,
             round(avg(CASE WHEN is_late=0 THEN review_score END), 2) ontime_review,
             round(avg(CASE WHEN is_late=1 THEN review_score END), 2) late_review
-            FROM deliveries {where}""", params).fetchone()
+            FROM deliveries WHERE (:state IS NULL OR customer_state = :state)""", params).fetchone()
         states = db.execute("""SELECT customer_state state, count(*) n,
             round(100.0 * avg(is_late),1) late_pct FROM deliveries
             GROUP BY customer_state HAVING count(*) >= 30 ORDER BY late_pct DESC""").fetchall()
-        months = db.execute(f"""SELECT substr(purchase_date,1,7) month, count(*) n,
-            round(100.0 * avg(is_late),1) late_pct FROM deliveries {where}
+        months = db.execute("""SELECT substr(purchase_date,1,7) month, count(*) n,
+            round(100.0 * avg(is_late),1) late_pct FROM deliveries WHERE (:state IS NULL OR customer_state = :state)
             GROUP BY substr(purchase_date,1,7) HAVING count(*) >= 30 ORDER BY month""", params).fetchall()
-        holiday = db.execute(f"""SELECT CASE WHEN h.date IS NULL THEN 'Día común' ELSE 'Feriado nacional' END day_type,
+        holiday = db.execute("""SELECT CASE WHEN h.date IS NULL THEN 'Día común' ELSE 'Feriado nacional' END day_type,
             count(*) n, round(100.0 * avg(d.is_late),1) late_pct
             FROM deliveries d LEFT JOIN holidays h ON d.purchase_date=h.date
             WHERE d.purchase_date BETWEEN '2018-01-01' AND '2018-12-31'
-            {'AND d.customer_state = ?' if state else ''}
+            AND (:state IS NULL OR d.customer_state = :state)
             GROUP BY day_type ORDER BY day_type""", params).fetchall()
     audit('dashboard_api' + (':' + state if state else ''), session['username'])
     return jsonify({'state': state, 'summary': dict(summary),

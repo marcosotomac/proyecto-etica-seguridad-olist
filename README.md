@@ -65,3 +65,11 @@ La clave de SQLCipher está en el mismo equipo que la base y el ZIP original no 
 
 Si ya tenías una base SQLite sin cifrar, detén el servidor y ejecuta `py migrate_db.py` una sola vez. Primero se crea `instance/pre-sqlcipher.enc`, un respaldo cifrado de la versión anterior. La migración conserva usuarios y auditoría.
 
+
+## Entrega final DS3031 — Tipo 2
+
+- [Informe final con la DPIA y la revisión de seguridad](informe/Informe_Olist.pdf).
+- [Presentación](informe/Presentacion_Tipo2.pdf) y [guion de la demostración](informe/Demo_Tipo2.md).
+- Evidencias: [reporte Bandit](informe/bandit-final.json) y [resultados de verificación](informe/verificacion-final.txt).
+
+El informe se compila desde `informe/Informe_Olist.tex` e incluye `informe/Final_Tipo2.tex`.

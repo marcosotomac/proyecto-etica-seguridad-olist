@@ -1,0 +1,35 @@
+\section{Entrega final: requisitos y validación}
+En el avance implementamos la importación de datos, el panel, la autenticación, la auditoría, el cifrado y la recuperación. En la entrega final revisamos la implementación con una herramienta de seguridad, ajustamos las consultas del panel y documentamos los riesgos de privacidad en una DPIA.
+
+\begin{itemize}
+\item \textbf{Funcionalidad.} El panel permite consultar indicadores agregados, filtrar por estado y comparar períodos. El backend protege la auditoría con un rol administrativo y permite restaurar una copia cifrada en una ruta separada.
+\item \textbf{Seguridad.} Aplicamos SQLCipher en reposo, hash a las contraseñas, HTTPS local con certificado autofirmado, control de acceso y registros de auditoría. Las secciones 7, 8 y 10 recogen las políticas, la formación propuesta, el plan ante incidentes y las mejoras futuras.
+\item \textbf{Privacidad y ética.} Evaluamos la necesidad de cada dato, los riesgos para las personas y las medidas para reducirlos a lo largo del ciclo de vida. Limitamos la publicación a documentación y resultados agregados.
+\end{itemize}
+
+\subsection{Análisis estático y comprobación posterior}
+Ejecutamos Bandit 1.9.4 sobre \texttt{app.py}, \texttt{backup.py}, \texttt{db\_crypto.py}, \texttt{import\_data.py} y \texttt{migrate\_db.py}. La primera pasada marcó tres alertas B608 de severidad media en las consultas de resumen, serie mensual y feriados. Los valores del filtro ya se pasaban como parámetros y las partes interpoladas eran constantes. Aun así, reemplazamos la construcción dinámica por tres consultas fijas con un parámetro opcional, de modo que la separación entre SQL y datos quede explícita.
+
+La segunda pasada revisó 376 líneas y reportó cero alertas, sin excluir pruebas ni agregar supresiones. Conservamos el resultado en \texttt{informe/bandit-final.json}. Este análisis abarca el código Python indicado. La revisión de dependencias, el frontend y la configuración de producción requieren verificaciones propias.
+
+En una copia temporal de la base, verificamos que la consulta sin sesión redirige al ingreso, el lector recibe 403 en auditoría y el administrador recibe 200. La API devolvió 96\,470, 717 y 0 pedidos para el panel general, MA y ZZ, respectivamente, y devolvió 400 para un formato inválido. La restauración pasó \texttt{integrity\_check} y conservó 96\,470 filas. Las sesiones para la comprobación de roles se prepararon con el cliente de Flask. El ingreso mediante el formulario es parte de la demostración en vivo.
+
+\section{Evaluación de Impacto en la Protección de Datos (DPIA)}
+\subsection{Alcance, flujo y necesidad}
+Esta evaluación cubre el prototipo académico local y la publicación de su informe. Los afectados potenciales son compradores representados en el conjunto histórico, vendedores cuyo identificador se importa y operadores cuyas cuentas y acciones quedan en auditoría. El equipo gestiona el entorno de demostración. El profesor recibe el informe y presencia la demo.
+
+El flujo va desde el ZIP de Olist y el calendario de feriados hasta la importación, la base cifrada, la API de agregados, el panel y el respaldo. La publicación web incluye cifras agregadas, documentación y capturas. El ZIP original queda local. Para comparar entregas se necesitan fechas, estado y puntuaciones. El identificador de vendedor se conserva para una posible ampliación, pero no es necesario para los indicadores actuales. Proponemos retirarlo en una futura migración antes de ampliar el uso del sistema. El registro de auditoría requiere un identificador de cuenta, una acción y una marca de tiempo.
+
+\subsection{Riesgos y controles}
+Usamos una valoración cualitativa que combina probabilidad e impacto. Un riesgo alto exige tratamiento antes de ampliar el alcance. Uno medio requiere seguimiento. Uno bajo se acepta para la demo local mientras se mantengan sus controles.
+
+\begin{description}
+\item[Exposición del ZIP o de las claves.] Afecta a compradores, vendedores y operadores. Riesgo inicial alto. La minimización, SQLCipher, el respaldo cifrado y la exclusión del repositorio reducen la exposición. El ZIP en claro y la custodia conjunta de claves mantienen un riesgo residual medio en el entorno local. Para ampliarlo, separar claves, cifrar el ZIP y restringir acceso al equipo.
+\item[Reidentificación a partir de grupos pequeños.] Afecta a compradores y vendedores. Riesgo inicial alto. El panel muestra agregados y limita grupos en las vistas descritas en la sección de análisis. Los cruces de salidas y los casos pequeños aún requieren revisión. Riesgo residual medio. Antes de publicar datos adicionales, revisar tamaños y evitar resultados por individuo.
+\item[Exposición de cuentas y trazas.] Afecta al equipo y a operadores. Riesgo inicial alto. El hash, los roles y el acceso administrativo a auditoría reducen el acceso indebido. Riesgo residual medio por credenciales de demo publicadas y falta de borrado automático. Usar cuentas desechables exclusivamente locales y definir un plazo de retención antes de un uso real.
+\item[Interpretación injusta de indicadores.] Afecta a vendedores, regiones y operadores logísticos. Riesgo inicial medio. Mostramos denominadores y advertimos sobre cobertura temporal, reseñas ausentes y factores no controlados. Riesgo residual bajo para exploración académica. Las métricas sirven para plantear preguntas, no para sancionar individuos.
+\item[Pérdida de datos o del material de recuperación.] Afecta al equipo y a la continuidad de la demo. Riesgo inicial alto. El respaldo autenticado y la restauración verificada reducen el riesgo a medio. Una pérdida simultánea del equipo y las claves todavía impediría recuperar los datos.
+\end{description}
+
+\subsection{Decisión, transparencia y seguimiento}
+La fuente pública no implica consentimiento para fines distintos al análisis académico. El panel explica el origen y período de los datos, y el informe describe qué campos se omiten, cómo se calculan los indicadores y qué sesgos limitan su interpretación. Para esta entrega acotamos el uso a la demo local con datos históricos y la difusión de agregados. El equipo debe revisar el material antes de compartirlo, conservar archivos locales durante el plazo acordado para el curso y reevaluar la DPIA si añade datos, cambia los destinatarios o despliega el backend fuera del equipo. El informe no registra una consulta a afectados ni una aprobación para un despliegue real.

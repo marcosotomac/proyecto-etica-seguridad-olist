@@ -1,0 +1,56 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage[spanish]{babel}
+\usetheme{Madrid}
+\title{Olist Lab: análisis seguro de entregas}
+\subtitle{Proyecto final DS3031 — Tipo 2}
+\author{Ronal Jesús Condor Blas \and Marco Soto Maceda}
+\date{}
+\begin{document}
+\frame{\titlepage}
+\begin{frame}{El problema}
+¿Cómo explorar demoras y satisfacción sin difundir registros individuales?
+\begin{itemize}
+\item Integramos pedidos históricos de Olist y feriados nacionales de Brasil.
+\item 96\,470 pedidos analizados. El 6.8\,\% llegó tarde.
+\item El filtro regional orienta la investigación. La comparación no establece causalidad.
+\end{itemize}
+\end{frame}
+\begin{frame}{Lo que construimos en el avance}
+\begin{itemize}
+\item React consulta indicadores agregados a través de Flask.
+\item SQLCipher protege la base operativa. Las contraseñas se almacenan con hash.
+\item La auditoría se reserva al administrador. HTTPS local usa un certificado autofirmado.
+\item El respaldo usa AES-256-GCM y se restaura en una ruta separada.
+\end{itemize}
+\end{frame}
+\begin{frame}{Qué agregamos para el final}
+\begin{itemize}
+\item Bandit marcó tres consultas construidas con fragmentos SQL.
+\item Reemplazamos esos fragmentos por consultas fijas con parámetros.
+\item Segunda pasada: 376 líneas Python revisadas, cero alertas dentro del alcance.
+\item Comprobamos filtros, permisos y restauración sobre una copia temporal.
+\end{itemize}
+\end{frame}
+\begin{frame}{Privacidad y riesgos residuales}
+\begin{itemize}
+\item La DPIA cubre a compradores, vendedores y operadores.
+\item Reducimos la exposición mediante minimización y agregación.
+\item El ZIP original sigue en claro y las claves permanecen en el mismo equipo.
+\item Antes de ampliar el alcance: separar custodia, reducir retención y revisar grupos pequeños.
+\end{itemize}
+\end{frame}
+\begin{frame}{Demostración}
+\begin{enumerate}
+\item Ingresar y filtrar Maranhão. Comparar 96\,470 pedidos generales con 717 del estado.
+\item Mostrar auditoría como administrador y acceso denegado como lector.
+\item Mostrar revisión de Bandit, HTTPS local y restauración con integridad comprobada.
+\end{enumerate}
+\end{frame}
+\begin{frame}{Cierre}
+\begin{itemize}
+\item La restauración comprobada aporta más evidencia que generar una copia.
+\item Los denominadores y las limitaciones deben acompañar a los indicadores.
+\item Para el siguiente proyecto proponemos revisión cruzada y ensayos de recuperación.
+\end{itemize}
+\end{frame}
+\end{document}
