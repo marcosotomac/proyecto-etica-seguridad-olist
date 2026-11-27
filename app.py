@@ -44,12 +44,13 @@ def connect():
 
 def audit(action, username=None):
     with connect() as db:
-        db.execute("INSERT INTO audit_log(username, action) VALUES (?,?)", (username, action))
+        db.execute("INSERT INTO audit_log(username, action) VALUES (?,?)", (username, action[:120]))
 
 
 def check_csrf():
     expected = session.get("csrf")
     if not expected or not secrets.compare_digest(request.form.get("csrf", ""), expected):
+        audit("csrf_rejected:" + request.path, session.get("username"))
         abort(400)
 
 
@@ -70,6 +71,7 @@ def role_required(*roles):
         @login_required
         def wrapper(*args, **kwargs):
             if session.get("role") not in roles:
+                audit("access_denied:" + request.path, session.get("username"))
                 abort(403)
             return fn(*args, **kwargs)
         return wrapper
@@ -159,6 +161,7 @@ def frontend_assets(filename):
 def dashboard_api():
     state = request.args.get("state", "").upper().strip()
     if state and (len(state) != 2 or not state.isalpha()):
+        audit("invalid_filter", session["username"])
         abort(400)
     params = {"state": state or None}
     with connect() as db:
