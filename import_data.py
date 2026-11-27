@@ -2,14 +2,14 @@
 
 Minimización: no se importan identificadores de clientes ni de vendedores, nombres,
 ciudades, códigos postales, coordenadas, pagos ni el texto libre de las reseñas.
+Si existe ``data/olist.zip.enc`` (ver ``backup.py seal-source``), se descifra en memoria.
 """
 import csv
 import io
 import zipfile
 
+from backup import open_source
 from db_crypto import DB, ROOT, connect
-
-ZIP = ROOT / "data" / "olist.zip"
 
 
 def rows(archive, name):
@@ -26,9 +26,7 @@ INSERT = """INSERT INTO deliveries (purchase_date, estimated_date, delivered_dat
 
 
 def main():
-    if not ZIP.exists():
-        raise SystemExit(f"Falta {ZIP}. Descarga el ZIP original de Olist.")
-    with zipfile.ZipFile(ZIP) as archive:
+    with zipfile.ZipFile(io.BytesIO(open_source())) as archive:
         customers = {r["customer_id"]: r["customer_state"] for r in rows(archive, "olist_customers_dataset.csv")}
         reviews = {}
         for r in rows(archive, "olist_order_reviews_dataset.csv"):
