@@ -2,74 +2,79 @@
 
 Proyecto de **Ronal Jesus Condor Blas y Marco Soto Maceda**. Es una demostración local para analizar entregas tardías del conjunto histórico de Olist (2016–2018), comparar la satisfacción de pedidos puntuales y tardíos y explorar diferencias por estado, mes y feriados nacionales de Brasil. Las comparaciones son descriptivas: no prueban causalidad ni representan el desempeño actual de una empresa.
 
+**Entrega final DS3031 — Tipo 2:** [informe en GitHub Pages](https://ronaljcb.github.io/proyecto-etica-seguridad-olist/) · [informe PDF](informe/Informe_Olist.pdf) · [presentación](informe/Presentacion_Tipo2.pdf) · [guion de la demo](informe/Demo_Tipo2.md) · [evidencias de seguridad](informe/evidencias/)
+
 ## Qué hace la aplicación
 
-- Importa pedidos, clientes, ítems y reseñas de Olist junto con nueve feriados nacionales de Brasil de 2018. Conserva solo las columnas necesarias; no importa nombres, direcciones ni identificadores de clientes.
-- Muestra indicadores agregados: 96 470 pedidos analizados, 6 534 tardíos (6,8 %), retraso medio de 10,6 días entre tardíos y calificaciones medias de 4,29/5 (puntuales) y 2,27/5 (tardíos) en la copia de datos utilizada.
-- Permite filtrar por estado del cliente. El panel React usa componentes shadcn/ui; Flask ofrece la API, el inicio de sesión y la página de auditoría.
-- Guarda la base operativa cifrada con SQLCipher. Las contraseñas se almacenan como hash. Hay roles `admin`, `analyst` y `reader`; solo `admin` ve `/audit`.
-- Genera y restaura respaldos cifrados y autenticados con AES-256-GCM.
+- Importa solo las columnas necesarias de Olist (fechas, estado federado, reseña) y los nueve feriados nacionales de Brasil de 2018. **No importa identificadores de clientes, pedidos ni vendedores**, nombres, ciudades, coordenadas, pagos ni texto libre.
+- Muestra indicadores agregados: 96 470 pedidos, 6 534 tardíos (6,8 %), retraso medio de 10,6 días y calificaciones de 4,29/5 (puntuales) frente a 2,27/5 (tardíos). Permite filtrar por estado. Los grupos con menos de 30 pedidos se suprimen **en el servidor**, con supresión complementaria.
+- Seguridad:
 
-## Cómo probarlo en Windows (Marco)
+| Requerimiento | Implementación |
+|---|---|
+| Datos en reposo | SQLCipher (AES-256 + HMAC); ZIP fuente sellado con AES-256-GCM; claves de 256 bits con permisos 0600, separables mediante `OLIST_KEY_DIR` |
+| Datos en tránsito y certificados | **CA propia** (`pki.py`: raíz ECDSA P-384 → servidor P-256 con SAN y serverAuth); TLS ≥ 1.2; HSTS |
+| Hash | scrypt con sal; mínimo 12 caracteres con mayúsculas, minúsculas y dígito |
+| Accesos | Roles `admin`/`analyst`/`reader`, CSRF, sesión de 30 min revocada al cambiar la clave o el rol, bloqueo por usuario (5) y por IP (20) |
+| Auditoría | Ingresos, fallos, bloqueos, consultas, denegaciones, CSRF y cambios de cuentas; retención de 180 días (`purge-audit`) |
+| Backups | AES-256-GCM autenticado, rotación `--keep`, restauración con `integrity_check` |
+| Análisis | Bandit, pip-audit, npm audit, gitleaks, 35 pruebas pytest y 20 comprobaciones en vivo; CI semanal y Dependabot |
 
-Necesitas **Python 3.11**, **Node.js 22** y Git. Abre PowerShell en una carpeta de trabajo y clona el repositorio público:
+## Instalación (Windows con PowerShell, o macOS/Linux reemplazando `py` por `python3`)
+
+Necesitas **Python 3.11+**, **Node.js 22** y Git.
 
 ```powershell
 git clone https://github.com/ronaljcb/proyecto-etica-seguridad-olist.git
 cd proyecto-etica-seguridad-olist
-py -m pip install -r requirements.txt
+py -m pip install -r requirements.txt -r requirements-dev.txt
 New-Item -ItemType Directory -Force data | Out-Null
 Invoke-WebRequest 'https://www.kaggle.com/api/v1/datasets/download/olistbr/brazilian-ecommerce' -OutFile 'data\olist.zip'
+py backup.py seal-source --delete-plain   # cifra el ZIP y borra la copia en claro
 py import_data.py
+py pki.py init                            # CA propia + certificado del servidor
 py app.py create-user --username marco --role admin
-cd frontend
-npm ci
-npm run build
-cd ..
+npm --prefix frontend ci
+npm --prefix frontend run build
 py app.py run
 ```
 
-El comando `create-user` solicita una contraseña de al menos 12 caracteres sin mostrarla. Abre **https://127.0.0.1:5000/login** e ingresa con el usuario que creaste. El certificado es autofirmado para esta demostración local, por lo que el navegador advertirá que no puede verificar su identidad. Si el navegador bloquea esa página sin opción de continuar, detén el servidor y ejecuta `py app.py run-local-http`; abre **http://127.0.0.1:5001/login**. Ese modo funciona solo en tu computadora y **no protege el tráfico**.
+Abre **https://127.0.0.1:5000/login**. Para que el navegador confíe en el servidor, instala `instance/pki/ca.crt` como raíz **solo en tu equipo** y antes compara su huella con `py pki.py show`:
 
-Si la descarga automática de Kaggle falla, descarga manualmente [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) y guarda el ZIP como `data/olist.zip` antes de ejecutar `py import_data.py`. La copia usada para las cifras del informe tiene SHA-256 `967E41E04FC306FE604E2A693F488995A8B41E5047418F8A5C8E4ABD6DECA784`; si Kaggle cambia el archivo, los resultados pueden variar.
+- **Windows:** `certutil -addstore -user Root instance\pki\ca.crt`
+- **macOS:** `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain instance/pki/ca.crt`
 
-### Recorrido de prueba
+Si no puedes instalar la CA, `py app.py run-local-http` sirve el panel en http://127.0.0.1:5001. Ese modo **no protege el tráfico**.
 
-1. Inicia sesión y comprueba los cuatro indicadores principales.
-2. Aplica un estado, por ejemplo `MA`, y observa cómo cambian el resumen, la tabla mensual y la comparación con feriados. La lista de estados sigue mostrando la comparación general.
-3. Abre **Auditoría** como administrador y verifica el registro de acceso y consultas. Los roles `analyst` y `reader` no pueden abrir esa página.
-4. Prueba un respaldo y su restauración a una ruta distinta:
+El ZIP de Kaggle usado para las cifras tiene SHA-256 `967E41E04FC306FE604E2A693F488995A8B41E5047418F8A5C8E4ABD6DECA784`.
 
-   ```powershell
-   py backup.py backup instance\copia.enc
-   py backup.py restore instance\copia.enc --destination instance\restaurada.db
-   ```
+## Operación
 
-   El programa comprueba la integridad. No reemplaces la base operativa con el archivo de prueba.
+```powershell
+py app.py list-users | set-password --username X | delete-user --username X | purge-audit --days 180
+py backup.py backup instance\backups\copia.enc --keep 7
+py backup.py restore instance\backups\copia.enc --destination instance\restaurada.db
+py pki.py verify | show | server
+scripts/security_scan.sh          # Bandit + pip-audit + npm audit + pytest → informe/evidencias/
+py scripts/verify_live.py         # 20 comprobaciones HTTPS sobre la instancia real
+```
 
-## Archivos y protección de claves
+Para regenerar las capturas, ejecuta `node frontend/capture_evidence.mjs`. Las credenciales se leen de `OLIST_ADMIN_USER`, `OLIST_ADMIN_PASS`, `OLIST_READER_USER` y `OLIST_READER_PASS`; **nunca se escriben en el código**.
+
+## Archivos
 
 | Ruta | Función |
 |---|---|
-| `import_data.py`, `holidays_2018.csv` | Importación de las dos fuentes. |
-| `db_crypto.py`, `migrate_db.py` | Conexión cifrada y migración de una base SQLite antigua. |
-| `app.py`, `templates/` | Backend, autenticación y auditoría. |
-| `frontend/src/` | Panel React actual. |
-| `backup.py` | Respaldo y restauración. |
-| `informe/Informe_Olist.tex`, `informe/utec-logo.png` | Fuente LaTeX y logotipo del informe. |
-| `informe/Informe_Olist.pdf` | Informe compilado. |
+| `import_data.py`, `holidays_2018.csv` | Importación mínima de las dos fuentes |
+| `db_crypto.py`, `migrate_db.py` | SQLCipher, custodia de claves y migración desde SQLite |
+| `app.py`, `templates/` | Backend, autenticación, API con supresión y auditoría |
+| `pki.py` | CA propia y certificado TLS |
+| `backup.py` | Respaldo, restauración, rotación y sellado del ZIP |
+| `frontend/src/` | Panel React con shadcn/ui |
+| `tests/`, `scripts/`, `.github/workflows/` | Pruebas, verificación, escaneo y CI |
+| `informe/` | Informe LaTeX, presentación, guion de la demo y evidencias |
+| `docs/` | Sitio de GitHub Pages |
 
-`data/` guarda el ZIP original. `instance/` guarda la base cifrada, `db.key`, la clave de sesión, la clave de respaldo y las copias. **Ambas carpetas están excluidas de Git.** Cada integrante genera sus propios archivos al importar y crear su usuario: Marco **no necesita** la base ni las claves de Ronal. Guarda una copia protegida de tus propias claves fuera de la carpeta del proyecto; si se pierde `db.key`, la base operativa no podrá abrirse. No publiques ZIP, claves, respaldos ni capturas con registros individuales.
+`data/` e `instance/` (ZIP sellado, base, claves, CA y respaldos) **están excluidas de Git**. Guarda una copia protegida de tus claves fuera del proyecto: si se pierde `db.key`, la base no puede abrirse. Cada integrante genera las suyas. El servidor Flask es de desarrollo y escucha solo en `127.0.0.1`.
 
-La clave de SQLCipher está en el mismo equipo que la base y el ZIP original no está cifrado. Esta implementación protege una copia aislada del archivo de base, pero no frente al compromiso del equipo completo. El servidor Flask es solo de desarrollo y escucha en `127.0.0.1`; no lo expongas en Internet.
-
-Si ya tenías una base SQLite sin cifrar, detén el servidor y ejecuta `py migrate_db.py` una sola vez. Primero se crea `instance/pre-sqlcipher.enc`, un respaldo cifrado de la versión anterior. La migración conserva usuarios y auditoría.
-
-
-## Entrega final DS3031 — Tipo 2
-
-- [Informe final con la DPIA y la revisión de seguridad](informe/Informe_Olist.pdf).
-- [Presentación](informe/Presentacion_Tipo2.pdf) y [guion de la demostración](informe/Demo_Tipo2.md).
-- Evidencias: [reporte Bandit](informe/bandit-final.json) y [resultados de verificación](informe/verificacion-final.txt).
-
-El informe se compila desde `informe/Informe_Olist.tex`. Los capítulos y las imágenes están en la misma carpeta.
+El informe se compila con `tectonic informe/Informe_Olist.tex` (o `pdflatex`), y la presentación con `informe/Presentacion_Tipo2.tex`.
