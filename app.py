@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db_crypto import INSTANCE, ROOT, connect as encrypted_connect, private_dir
 
 ROLES = ("admin", "analyst", "reader")
+MIN_GROUP = 30            # supresión de celdas pequeñas (riesgo de inferencia)
 USER_LIMIT, IP_LIMIT = 5, 20  # intentos fallidos admitidos en 15 minutos
 
 private_dir(INSTANCE)
@@ -156,6 +157,15 @@ def frontend_assets(filename):
     return send_from_directory(ROOT / "frontend" / "dist" / "assets", filename)
 
 
+def suppress(row):
+    """Oculta porcentajes y medias de grupos menores a MIN_GROUP; conserva solo el tamaño."""
+    data = dict(row)
+    if data.get("n", 0) < MIN_GROUP:
+        data.update({k: None for k in data if k not in ("n", "state", "month", "day_type")})
+        data["suppressed"] = True
+    return data
+
+
 @app.get("/api/dashboard")
 @login_required
 def dashboard_api():
@@ -163,7 +173,7 @@ def dashboard_api():
     if state and (len(state) != 2 or not state.isalpha()):
         audit("invalid_filter", session["username"])
         abort(400)
-    params = {"state": state or None}
+    params = {"state": state or None, "k": MIN_GROUP}
     with connect() as db:
         summary = db.execute("""SELECT count(*) n, sum(is_late) late,
             round(100.0 * avg(is_late), 1) late_pct,
@@ -173,10 +183,10 @@ def dashboard_api():
             FROM deliveries WHERE (:state IS NULL OR customer_state = :state)""", params).fetchone()
         states = db.execute("""SELECT customer_state state, count(*) n,
             round(100.0 * avg(is_late),1) late_pct FROM deliveries
-            GROUP BY customer_state HAVING count(*) >= 30 ORDER BY late_pct DESC""").fetchall()
+            GROUP BY customer_state HAVING count(*) >= :k ORDER BY late_pct DESC""", params).fetchall()
         months = db.execute("""SELECT substr(purchase_date,1,7) month, count(*) n,
             round(100.0 * avg(is_late),1) late_pct FROM deliveries WHERE (:state IS NULL OR customer_state = :state)
-            GROUP BY substr(purchase_date,1,7) HAVING count(*) >= 30 ORDER BY month""", params).fetchall()
+            GROUP BY substr(purchase_date,1,7) HAVING count(*) >= :k ORDER BY month""", params).fetchall()
         holiday = db.execute("""SELECT CASE WHEN h.date IS NULL THEN 'Día común' ELSE 'Feriado nacional' END day_type,
             count(*) n, round(100.0 * avg(d.is_late),1) late_pct
             FROM deliveries d LEFT JOIN holidays h ON d.purchase_date=h.date
@@ -184,10 +194,10 @@ def dashboard_api():
             AND (:state IS NULL OR d.customer_state = :state)
             GROUP BY day_type ORDER BY day_type""", params).fetchall()
     audit("dashboard_api" + (":" + state if state else ""), session["username"])
-    return jsonify({"state": state, "summary": dict(summary),
+    return jsonify({"state": state, "summary": suppress(summary), "min_group": MIN_GROUP,
                     "states": [dict(row) for row in states],
                     "months": [dict(row) for row in months],
-                    "holiday": [dict(row) for row in holiday],
+                    "holiday": [suppress(row) for row in holiday],
                     "user": {"username": session["username"], "role": session["role"]},
                     "csrf": session.setdefault("csrf", secrets.token_urlsafe(32))})
 

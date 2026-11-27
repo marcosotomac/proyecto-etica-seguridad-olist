@@ -7,11 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
-type Summary = { n: number; late: number | null; late_pct: number | null; avg_delay: number | null; ontime_review: number | null; late_review: number | null }
+type Summary = { n: number; suppressed?: boolean; late: number | null; late_pct: number | null; avg_delay: number | null; ontime_review: number | null; late_review: number | null }
 type Region = { state: string; n: number; late_pct: number }
 type Month = { month: string; n: number; late_pct: number }
-type Holiday = { day_type: string; n: number; late_pct: number }
-type DashboardData = { state: string; summary: Summary; states: Region[]; months: Month[]; holiday: Holiday[]; user: { username: string; role: string }; csrf: string }
+type Holiday = { day_type: string; n: number; late_pct: number | null; suppressed?: boolean }
+type DashboardData = { state: string; min_group: number; summary: Summary; states: Region[]; months: Month[]; holiday: Holiday[]; user: { username: string; role: string }; csrf: string }
 
 const number = new Intl.NumberFormat('es-PE')
 const decimal = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 1 })
@@ -68,8 +68,8 @@ function App() {
         <Card><CardHeader><p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">Evolución</p><CardTitle className="flex items-center gap-2 text-xl"><CalendarDays className="size-5 text-muted-foreground" />Por mes de compra</CardTitle></CardHeader><CardContent><p className="mb-3 text-xs text-muted-foreground"><span className="mr-1 inline-block size-2 rounded-full bg-emerald-400" />Verde: menos retrasos que el promedio mostrado ({pct(summary.late_pct)}).</p><div className="max-h-92 overflow-auto" tabIndex={0} aria-label="Tabla de entregas por mes"><Table><TableHeader><TableRow><TableHead>Mes</TableHead><TableHead>Pedidos</TableHead><TableHead className="text-right">Tardíos</TableHead></TableRow></TableHeader><TableBody>{data.months.map(item => <TableRow key={item.month}><TableCell className="font-medium">{item.month}</TableCell><TableCell>{number.format(item.n)}</TableCell><TableCell className="text-right"><Badge variant="secondary" className={`tabular-nums ${summary.late_pct != null && item.late_pct < summary.late_pct ? 'bg-emerald-400/10 text-emerald-300' : ''}`}>{pct(item.late_pct)}</Badge></TableCell></TableRow>)}</TableBody></Table></div></CardContent></Card>
       </section>
 
-      <Card><CardContent className="flex flex-col gap-6 pt-6 md:flex-row md:items-center md:justify-between"><div><p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">Segunda fuente · feriados nacionales 2018</p><h2 className="text-xl font-semibold tracking-tight">Compras en feriados</h2><p className="mt-1 max-w-xl text-sm text-muted-foreground">Comparación exploratoria por fecha de compra. No demuestra que el feriado cause retrasos.</p></div><div className="flex gap-8">{data.holiday.map(item => <div key={item.day_type} className="min-w-28"><p className="text-xs text-muted-foreground">{item.day_type}</p><strong className="text-2xl font-semibold tabular-nums">{item.n < 30 ? '—' : pct(item.late_pct)}</strong><p className="text-xs text-muted-foreground">{item.n < 30 ? `Muestra pequeña: ${number.format(item.n)} pedidos` : `${number.format(item.n)} pedidos`}</p></div>)}</div></CardContent></Card>
-      <Separator /><p className="pb-5 text-xs leading-5 text-muted-foreground">Fuentes: Brazilian E-Commerce Public Dataset by Olist y Portaria n.º 468/2017 de Brasil. No se muestran identificadores ni ubicaciones precisas de clientes.</p>
+      <Card><CardContent className="flex flex-col gap-6 pt-6 md:flex-row md:items-center md:justify-between"><div><p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">Segunda fuente · feriados nacionales 2018</p><h2 className="text-xl font-semibold tracking-tight">Compras en feriados</h2><p className="mt-1 max-w-xl text-sm text-muted-foreground">Comparación exploratoria por fecha de compra. No demuestra que el feriado cause retrasos.</p></div><div className="flex gap-8">{data.holiday.map(item => <div key={item.day_type} className="min-w-28"><p className="text-xs text-muted-foreground">{item.day_type}</p><strong className="text-2xl font-semibold tabular-nums">{item.suppressed ? '—' : pct(item.late_pct)}</strong><p className="text-xs text-muted-foreground">{item.suppressed ? `Muestra pequeña: ${number.format(item.n)} pedidos` : `${number.format(item.n)} pedidos`}</p></div>)}</div></CardContent></Card>
+      <Separator /><p className="pb-5 text-xs leading-5 text-muted-foreground">Fuentes: Brazilian E-Commerce Public Dataset by Olist y Portaria n.º 468/2017 de Brasil. No se muestran identificadores ni ubicaciones precisas de clientes. Los grupos con menos de {data.min_group} pedidos se suprimen en el servidor.</p>
     </main>
   </div>
 }
