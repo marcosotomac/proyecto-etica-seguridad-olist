@@ -1,24 +1,24 @@
-"""Panel académico local; ejecutar con HTTPS de desarrollo."""
+"""Olist Lab: backend Flask del panel académico. Ejecutar con HTTPS de desarrollo."""
 import argparse
+import getpass
 import secrets
 from functools import wraps
-from pathlib import Path
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-from db_crypto import DB, connect as encrypted_connect
+from db_crypto import INSTANCE, ROOT, connect as encrypted_connect
 
-ROOT = Path(__file__).resolve().parent
-INSTANCE = ROOT / "instance"
-INSTANCE.mkdir(exist_ok=True)
+ROLES = ("admin", "analyst", "reader")
+
+INSTANCE.mkdir(parents=True, exist_ok=True)
 KEY_FILE = INSTANCE / "secret.key"
 if not KEY_FILE.exists():
     KEY_FILE.write_text(secrets.token_hex(32), encoding="ascii")
 
 app = Flask(__name__)
 app.secret_key = KEY_FILE.read_text(encoding="ascii").strip()
-app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True,
-                  SESSION_COOKIE_SAMESITE="Lax", MAX_CONTENT_LENGTH=1024 * 1024)
+app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax",
+                  MAX_CONTENT_LENGTH=1024 * 1024)
 
 
 def connect():
@@ -41,6 +41,12 @@ def audit(action, username=None):
         db.execute("INSERT INTO audit_log(username, action) VALUES (?,?)", (username, action))
 
 
+def check_csrf():
+    expected = session.get("csrf")
+    if not expected or not secrets.compare_digest(request.form.get("csrf", ""), expected):
+        abort(400)
+
+
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -48,6 +54,18 @@ def login_required(fn):
             return redirect(url_for("login"))
         return fn(*args, **kwargs)
     return wrapper
+
+
+def role_required(*roles):
+    def decorator(fn):
+        @wraps(fn)
+        @login_required
+        def wrapper(*args, **kwargs):
+            if session.get("role") not in roles:
+                abort(403)
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @app.after_request
@@ -60,72 +78,67 @@ def headers(response):
     return response
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        expected_csrf = session.get('csrf')
-        if not expected_csrf or not secrets.compare_digest(request.form.get('csrf', ''), expected_csrf):
-            abort(400)
-        username = request.form.get('username', '').strip()[:80]
-        password = request.form.get('password', '')
+    error = None
+    if request.method == "POST":
+        check_csrf()
+        username = request.form.get("username", "").strip()[:80]
+        password = request.form.get("password", "")
         with connect() as db:
-            attempts = db.execute("""SELECT count(*) FROM login_attempts WHERE username=?
+            by_user = db.execute("""SELECT count(*) FROM login_attempts WHERE username=?
                 AND at >= datetime('now', '-15 minutes')""", (username,)).fetchone()[0]
-        if attempts >= 5:
-            audit('login_blocked', username[:80])
-            abort(429, 'Demasiados intentos. Espera 15 minutos.')
+        if by_user >= 5:
+            audit("login_blocked", username)
+            abort(429, "Demasiados intentos. Espera 15 minutos.")
         with connect() as db:
             user = db.execute("SELECT password_hash, role FROM users WHERE username=?", (username,)).fetchone()
-        if user and check_password_hash(user['password_hash'], password):
+        if user and check_password_hash(user["password_hash"], password):
             with connect() as db:
                 db.execute("DELETE FROM login_attempts WHERE username=?", (username,))
-            session.clear()
-            session['username'], session['role'] = username, user['role']
-            audit('login', username)
-            return redirect(url_for('dashboard'))
+            session.clear()  # nuevo identificador de sesión y nuevo token CSRF
+            session["username"], session["role"] = username, user["role"]
+            audit("login", username)
+            return redirect(url_for("dashboard"))
         with connect() as db:
-            db.execute("INSERT INTO login_attempts(username) VALUES (?)", (username[:80],))
-        audit('login_failed', username[:80])
-        error = 'Credenciales incorrectas'
-    else:
-        error = None
-    session['csrf'] = secrets.token_urlsafe(32)
-    return render_template('login.html', error=error, csrf=session['csrf'])
+            db.execute("INSERT INTO login_attempts(username) VALUES (?)", (username,))
+        audit("login_failed", username)
+        error = "Credenciales incorrectas"
+    session["csrf"] = secrets.token_urlsafe(32)
+    return render_template("login.html", error=error, csrf=session["csrf"])
 
 
-@app.post('/logout')
+@app.post("/logout")
 @login_required
 def logout():
-    expected_csrf = session.get('csrf')
-    if not expected_csrf or not secrets.compare_digest(request.form.get('csrf', ''), expected_csrf):
-        abort(400)
-    audit('logout', session['username'])
+    check_csrf()
+    audit("logout", session["username"])
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 
-@app.get('/')
+@app.get("/")
 @login_required
 def dashboard():
-    built = ROOT / 'frontend' / 'dist'
+    built = ROOT / "frontend" / "dist"
     if built.is_dir():
-        return send_from_directory(built, 'index.html')
-    abort(503, 'Compila el frontend: cd frontend; npm install; npm run build')
+        return send_from_directory(built, "index.html")
+    abort(503, "Compila el frontend: cd frontend; npm ci; npm run build")
 
 
-@app.get('/assets/<path:filename>')
+@app.get("/assets/<path:filename>")
 @login_required
 def frontend_assets(filename):
-    return send_from_directory(ROOT / 'frontend' / 'dist' / 'assets', filename)
+    return send_from_directory(ROOT / "frontend" / "dist" / "assets", filename)
 
 
-@app.get('/api/dashboard')
+@app.get("/api/dashboard")
 @login_required
 def dashboard_api():
-    state = request.args.get('state', '').upper().strip()
+    state = request.args.get("state", "").upper().strip()
     if state and (len(state) != 2 or not state.isalpha()):
         abort(400)
-    params = {'state': state or None}
+    params = {"state": state or None}
     with connect() as db:
         summary = db.execute("""SELECT count(*) n, sum(is_late) late,
             round(100.0 * avg(is_late), 1) late_pct,
@@ -145,47 +158,46 @@ def dashboard_api():
             WHERE d.purchase_date BETWEEN '2018-01-01' AND '2018-12-31'
             AND (:state IS NULL OR d.customer_state = :state)
             GROUP BY day_type ORDER BY day_type""", params).fetchall()
-    audit('dashboard_api' + (':' + state if state else ''), session['username'])
-    return jsonify({'state': state, 'summary': dict(summary),
-                    'states': [dict(row) for row in states],
-                    'months': [dict(row) for row in months],
-                    'holiday': [dict(row) for row in holiday],
-                    'user': {'username': session['username'], 'role': session['role']},
-                    'csrf': session.setdefault('csrf', secrets.token_urlsafe(32))})
+    audit("dashboard_api" + (":" + state if state else ""), session["username"])
+    return jsonify({"state": state, "summary": dict(summary),
+                    "states": [dict(row) for row in states],
+                    "months": [dict(row) for row in months],
+                    "holiday": [dict(row) for row in holiday],
+                    "user": {"username": session["username"], "role": session["role"]},
+                    "csrf": session.setdefault("csrf", secrets.token_urlsafe(32))})
 
 
-@app.get('/audit')
-@login_required
+@app.get("/audit")
+@role_required("admin")
 def audit_view():
-    if session.get('role') != 'admin':
-        abort(403)
     with connect() as db:
         entries = db.execute("SELECT at, username, action FROM audit_log ORDER BY id DESC LIMIT 100").fetchall()
-    audit('audit_view', session['username'])
-    return render_template('audit.html', entries=entries)
+    audit("audit_view", session["username"])
+    return render_template("audit.html", entries=entries)
 
+
+# --- Administración por consola (no expuesta en la web) -------------------------------------------
 
 def create_user(username, password, role):
-    if role not in {'admin', 'analyst', 'reader'} or not username or len(password) < 12:
-        raise ValueError('Usuario requerido, rol válido y contraseña de al menos 12 caracteres')
+    if role not in ROLES or not username or len(password) < 12:
+        raise ValueError("Usuario requerido, rol válido y contraseña de al menos 12 caracteres")
     with connect() as db:
         db.execute("INSERT INTO users VALUES (?,?,?)", (username, generate_password_hash(password), role))
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['run', 'run-local-http', 'create-user'])
-    parser.add_argument('--username')
-    parser.add_argument('--role', default='reader')
-    parser.add_argument('--port', type=int, default=None)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Olist Lab")
+    parser.add_argument("command", choices=["run", "run-local-http", "create-user"])
+    parser.add_argument("--username")
+    parser.add_argument("--role", default="reader")
+    parser.add_argument("--port", type=int, default=None)
     args = parser.parse_args()
-    if args.command == 'create-user':
-        import getpass
-        create_user(args.username, getpass.getpass('Contraseña: '), args.role)
-        print('Usuario creado')
-    elif args.command == 'run-local-http':
+    if args.command == "create-user":
+        create_user(args.username, getpass.getpass("Contraseña: "), args.role)
+        print("Usuario creado")
+    elif args.command == "run-local-http":
         # Solo para ver el prototipo en navegadores que bloquean certificados autofirmados.
-        app.config['SESSION_COOKIE_SECURE'] = False
-        app.run(host='127.0.0.1', port=args.port or 5001, debug=False)
+        app.config["SESSION_COOKIE_SECURE"] = False
+        app.run(host="127.0.0.1", port=args.port or 5001, debug=False)
     else:
-        app.run(host='127.0.0.1', port=args.port or 5000, debug=False, ssl_context='adhoc')
+        app.run(host="127.0.0.1", port=args.port or 5000, debug=False, ssl_context="adhoc")
