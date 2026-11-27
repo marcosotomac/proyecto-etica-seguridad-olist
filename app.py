@@ -157,6 +157,20 @@ def frontend_assets(filename):
     return send_from_directory(ROOT / "frontend" / "dist" / "assets", filename)
 
 
+def with_complement(rows):
+    """Filtra grupos < MIN_GROUP con supresión complementaria.
+
+    Si se ocultara exactamente un grupo, su valor podría deducirse restando los visibles del total;
+    en ese caso también se oculta el grupo visible más pequeño (Hundepool et al., control de
+    divulgación estadística)."""
+    rows = [dict(r) for r in rows]
+    hidden = [r for r in rows if r["n"] < MIN_GROUP]
+    visible = [r for r in rows if r["n"] >= MIN_GROUP]
+    if len(hidden) == 1 and visible:
+        visible.remove(min(visible, key=lambda r: r["n"]))
+    return visible
+
+
 def suppress(row):
     """Oculta porcentajes y medias de grupos menores a MIN_GROUP; conserva solo el tamaño."""
     data = dict(row)
@@ -166,6 +180,15 @@ def suppress(row):
     return data
 
 
+def suppress_partition(rows):
+    """Feriado/día común forman una partición de 2018: si una celda se oculta, se ocultan ambas."""
+    rows = [suppress(r) for r in rows]
+    if any(r.get("suppressed") for r in rows):
+        for r in rows:
+            r.update(late_pct=None, suppressed=True)
+    return rows
+
+
 @app.get("/api/dashboard")
 @login_required
 def dashboard_api():
@@ -173,7 +196,7 @@ def dashboard_api():
     if state and (len(state) != 2 or not state.isalpha()):
         audit("invalid_filter", session["username"])
         abort(400)
-    params = {"state": state or None, "k": MIN_GROUP}
+    params = {"state": state or None}
     with connect() as db:
         summary = db.execute("""SELECT count(*) n, sum(is_late) late,
             round(100.0 * avg(is_late), 1) late_pct,
@@ -183,10 +206,10 @@ def dashboard_api():
             FROM deliveries WHERE (:state IS NULL OR customer_state = :state)""", params).fetchone()
         states = db.execute("""SELECT customer_state state, count(*) n,
             round(100.0 * avg(is_late),1) late_pct FROM deliveries
-            GROUP BY customer_state HAVING count(*) >= :k ORDER BY late_pct DESC""", params).fetchall()
+            GROUP BY customer_state ORDER BY late_pct DESC""").fetchall()
         months = db.execute("""SELECT substr(purchase_date,1,7) month, count(*) n,
             round(100.0 * avg(is_late),1) late_pct FROM deliveries WHERE (:state IS NULL OR customer_state = :state)
-            GROUP BY substr(purchase_date,1,7) HAVING count(*) >= :k ORDER BY month""", params).fetchall()
+            GROUP BY substr(purchase_date,1,7) ORDER BY month""", params).fetchall()
         holiday = db.execute("""SELECT CASE WHEN h.date IS NULL THEN 'Día común' ELSE 'Feriado nacional' END day_type,
             count(*) n, round(100.0 * avg(d.is_late),1) late_pct
             FROM deliveries d LEFT JOIN holidays h ON d.purchase_date=h.date
@@ -195,9 +218,9 @@ def dashboard_api():
             GROUP BY day_type ORDER BY day_type""", params).fetchall()
     audit("dashboard_api" + (":" + state if state else ""), session["username"])
     return jsonify({"state": state, "summary": suppress(summary), "min_group": MIN_GROUP,
-                    "states": [dict(row) for row in states],
-                    "months": [dict(row) for row in months],
-                    "holiday": [suppress(row) for row in holiday],
+                    "states": with_complement(states),
+                    "months": with_complement(months),
+                    "holiday": suppress_partition(holiday),
                     "user": {"username": session["username"], "role": session["role"]},
                     "csrf": session.setdefault("csrf", secrets.token_urlsafe(32))})
 
