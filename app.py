@@ -2,6 +2,7 @@
 import argparse
 import getpass
 import secrets
+from datetime import timedelta
 from functools import wraps
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, session, url_for
@@ -19,6 +20,7 @@ if not KEY_FILE.exists():
 app = Flask(__name__)
 app.secret_key = KEY_FILE.read_text(encoding="ascii").strip()
 app.config.update(SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax",
+                  PERMANENT_SESSION_LIFETIME=timedelta(minutes=30), SESSION_REFRESH_EACH_REQUEST=True,
                   MAX_CONTENT_LENGTH=1024 * 1024)
 
 
@@ -98,6 +100,7 @@ def login():
             with connect() as db:
                 db.execute("DELETE FROM login_attempts WHERE username=?", (username,))
             session.clear()  # nuevo identificador de sesión y nuevo token CSRF
+            session.permanent = True
             session["username"], session["role"] = username, user["role"]
             audit("login", username)
             return redirect(url_for("dashboard"))
