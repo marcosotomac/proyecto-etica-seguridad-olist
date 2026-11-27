@@ -1,31 +1,55 @@
-"""Conexiones SQLCipher y clave local de la base operativa."""
+"""Conexiones SQLCipher, rutas de instancia y custodia local de claves.
+
+Variables de entorno opcionales:
+- ``OLIST_INSTANCE``: carpeta de la base operativa, respaldos y PKI (por defecto ``instance/``).
+- ``OLIST_KEY_DIR``: carpeta de las claves simétricas (por defecto, la misma instancia).
+  Permite guardar ``db.key``, ``backup.key`` y ``source.key`` en otro volumen, separado de la base.
+"""
 import os
 from pathlib import Path
 
 import sqlcipher3
 
 ROOT = Path(__file__).resolve().parent
-INSTANCE = ROOT / "instance"
+INSTANCE = Path(os.environ.get("OLIST_INSTANCE", ROOT / "instance")).resolve()
+KEY_DIR = Path(os.environ.get("OLIST_KEY_DIR", INSTANCE)).resolve()
 DB = INSTANCE / "olist.db"
-KEY = INSTANCE / "db.key"
+KEY = KEY_DIR / "db.key"
 SQLITE_HEADER = b"SQLite format 3\x00"
 
 
-def database_key(create=False):
-    INSTANCE.mkdir(exist_ok=True)
-    if not KEY.exists() and create:
+def private_dir(path):
+    """Crea una carpeta accesible solo para el usuario actual."""
+    path = Path(path)
+    path.mkdir(parents=True, exist_ok=True)
+    try:
+        os.chmod(path, 0o700)
+    except OSError:  # Windows ignora parte de los bits POSIX.
+        pass
+    return path
+
+
+def load_key(path, create=False):
+    """Lee una clave de 32 bytes; la crea con permisos 0600 si se solicita."""
+    path = Path(path)
+    private_dir(path.parent)
+    if not path.exists() and create:
         try:
-            with KEY.open("xb") as stream:
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "wb") as stream:
                 stream.write(os.urandom(32))
-            os.chmod(KEY, 0o600)
         except FileExistsError:
             pass
-    if not KEY.exists():
-        raise RuntimeError("Falta instance/db.key; no se puede abrir la base cifrada")
-    key = KEY.read_bytes()
+    if not path.exists():
+        raise RuntimeError(f"Falta {path.name}; sin ella no se puede descifrar la información")
+    key = path.read_bytes()
     if len(key) != 32:
-        raise RuntimeError("La clave de la base debe tener 32 bytes")
+        raise RuntimeError(f"{path.name} debe tener 32 bytes")
     return key
+
+
+def database_key(create=False):
+    return load_key(KEY, create=create)
 
 
 def connect(path=DB, create=False):
@@ -35,7 +59,7 @@ def connect(path=DB, create=False):
             if stream.read(16) == SQLITE_HEADER:
                 raise RuntimeError("La base todavía está en texto claro: ejecuta py migrate_db.py")
     key = database_key(create=create)
-    path.parent.mkdir(parents=True, exist_ok=True)
+    private_dir(path.parent)
     db = sqlcipher3.connect(path)
     db.execute(f"PRAGMA key = \"x'{key.hex()}'\"")
     db.execute("PRAGMA temp_store = MEMORY")
