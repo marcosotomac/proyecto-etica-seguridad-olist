@@ -28,7 +28,7 @@ function App() {
     const controller = new AbortController()
     fetch(`/api/dashboard${selectedState ? `?state=${encodeURIComponent(selectedState)}` : ''}`, { signal: controller.signal })
       .then(async response => {
-        if (response.redirected || response.url.includes('/login')) {
+        if (response.status === 401 || response.redirected || response.url.includes('/login')) {
           window.location.assign('/login')
           return null
         }

@@ -54,6 +54,8 @@ def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if not session.get("username"):
+            if request.path.startswith("/api/"):
+                return jsonify({"error": "sesión requerida"}), 401
             return redirect(url_for("login"))
         return fn(*args, **kwargs)
     return wrapper
