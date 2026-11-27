@@ -1,7 +1,7 @@
 """Respaldo y restauración de la base con cifrado autenticado AES-256-GCM.
 
 Comandos:
-  py backup.py backup instance/backups/copia.enc
+  py backup.py backup instance/backups/copia.enc [--keep 7]
   py backup.py restore instance/backups/copia.enc --destination instance/restaurada.db
 """
 import argparse
@@ -13,9 +13,10 @@ from pathlib import Path
 
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from db_crypto import DB, KEY_DIR, SQLITE_HEADER, connect, load_key, private_dir
+from db_crypto import DB, INSTANCE, KEY_DIR, SQLITE_HEADER, connect, load_key, private_dir
 
 KEY = KEY_DIR / "backup.key"
+BACKUP_DIR = INSTANCE / "backups"
 MAGIC = b"OLIST-BACKUP-v1\n"
 NONCE = 12
 TAG = 16
@@ -49,7 +50,15 @@ def write_private(path, data):
         stream.write(data)
 
 
-def backup(destination):
+def prune(directory, keep):
+    """Conserva las ``keep`` copias .enc más recientes de la carpeta indicada."""
+    copies = sorted(Path(directory).glob("*.enc"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for old in copies[keep:]:
+        old.unlink()
+        print(f"Copia antigua eliminada por rotación: {old.name}")
+
+
+def backup(destination, keep=None):
     if not DB.exists():
         raise FileNotFoundError(DB)
     destination = Path(destination)
@@ -62,6 +71,8 @@ def backup(destination):
             source.backup(target)
         write_private(destination, seal(snapshot.read_bytes(), get_key(), MAGIC))
     print(f"Respaldo cifrado: {destination}")
+    if keep:
+        prune(destination.parent, keep)
 
 
 def restore(source, destination):
@@ -87,11 +98,12 @@ if __name__ == "__main__":
     parser.add_argument("command", choices=["backup", "restore"])
     parser.add_argument("path", nargs="?", help="Archivo .enc (backup/restore)")
     parser.add_argument("--destination", help="Ruta de restauración; obligatoria para restore")
+    parser.add_argument("--keep", type=int, help="Rotación: conservar solo las N copias más recientes")
     args = parser.parse_args()
     if not args.path:
         parser.error(f"{args.command} requiere la ruta del archivo .enc")
     elif args.command == "backup":
-        backup(args.path)
+        backup(args.path, args.keep)
     elif not args.destination:
         parser.error("restore requiere --destination")
     else:
