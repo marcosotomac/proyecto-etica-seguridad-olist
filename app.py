@@ -3,6 +3,7 @@ import argparse
 import getpass
 import hashlib
 import secrets
+import sys
 from datetime import timedelta
 from functools import wraps
 
@@ -277,6 +278,23 @@ def create_user(username, password, role):
     validate_password(password)
     with connect() as db:
         db.execute("INSERT INTO users VALUES (?,?,?)", (username, generate_password_hash(password), role))
+    audit(f"user_created:{username}:{role}", "console")
+
+
+def set_password(username, password):
+    validate_password(password)
+    with connect() as db:
+        if not db.execute("UPDATE users SET password_hash=? WHERE username=?",
+                          (generate_password_hash(password), username)).rowcount:
+            raise ValueError("El usuario no existe")
+    audit(f"password_reset:{username}", "console")
+
+
+def delete_user(username):
+    with connect() as db:
+        if not db.execute("DELETE FROM users WHERE username=?", (username,)).rowcount:
+            raise ValueError("El usuario no existe")
+    audit(f"user_deleted:{username}", "console")
 
 
 def purge_audit(days):
@@ -286,17 +304,40 @@ def purge_audit(days):
     return removed
 
 
+def read_password(from_stdin):
+    if from_stdin:
+        return sys.stdin.readline().rstrip("\n")
+    first = getpass.getpass("Contraseña: ")
+    if first != getpass.getpass("Repite la contraseña: "):
+        raise SystemExit("Las contraseñas no coinciden")
+    return first
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Olist Lab")
-    parser.add_argument("command", choices=["run", "run-local-http", "create-user", "purge-audit"])
+    parser.add_argument("command", choices=["run", "run-local-http", "create-user", "set-password",
+                                            "delete-user", "list-users", "purge-audit"])
     parser.add_argument("--username")
-    parser.add_argument("--role", default="reader")
+    parser.add_argument("--role", default="reader", choices=ROLES)
     parser.add_argument("--port", type=int, default=None)
     parser.add_argument("--days", type=int, default=AUDIT_RETENTION_DAYS)
+    parser.add_argument("--password-stdin", action="store_true", help="Lee la contraseña de stdin (automatización)")
     args = parser.parse_args()
+    if args.command in {"create-user", "set-password", "delete-user"} and not args.username:
+        parser.error("--username es obligatorio")
     if args.command == "create-user":
-        create_user(args.username, getpass.getpass("Contraseña: "), args.role)
+        create_user(args.username, read_password(args.password_stdin), args.role)
         print("Usuario creado")
+    elif args.command == "set-password":
+        set_password(args.username, read_password(args.password_stdin))
+        print("Contraseña actualizada")
+    elif args.command == "delete-user":
+        delete_user(args.username)
+        print("Usuario eliminado")
+    elif args.command == "list-users":
+        with connect() as db:
+            for row in db.execute("SELECT username, role FROM users ORDER BY username"):
+                print(f"{row['username']}\t{row['role']}")
     elif args.command == "purge-audit":
         print(f"Eventos eliminados (más de {args.days} días): {purge_audit(args.days)}")
     elif args.command == "run-local-http":
