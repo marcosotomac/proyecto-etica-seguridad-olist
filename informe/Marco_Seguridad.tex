@@ -1,0 +1,38 @@
+\section{Marco teórico}
+\label{sec:marco-teorico}
+El objetivo de seguridad de Olist Lab combina \textbf{confidencialidad}, \textbf{integridad} y \textbf{disponibilidad}. La confidencialidad limita quién puede leer datos y registros. La integridad permite detectar cambios no autorizados en una copia. La disponibilidad requiere que el equipo pueda recuperar la base tras una pérdida. Usamos NIST CSF 2.0 como referencia para relacionar estas metas con identificación de riesgos, protección, detección, respuesta y recuperación \cite{nistcsf}.
+
+\paragraph{Cifrado y autenticación de copias.} SQLCipher cifra las páginas de la base con AES-256 y protege su integridad con HMAC según su configuración por defecto \cite{sqlcipher}. Esto protege el archivo frente a lectura directa sin la clave. Para respaldos, AES-GCM cifra y autentica la copia. La etiqueta permite detectar alteraciones y el nonce debe ser único para cada cifrado con una misma clave \cite{gcm}. La prueba del final muestra que la aplicación admite una copia válida y rechaza una alterada.
+
+\paragraph{Hash de contraseñas y TLS.} Un hash de contraseñas con sal y costo de cómputo permite verificar una contraseña sin guardarla de forma recuperable \cite{owasp}. La sal dificulta reutilizar cálculos entre cuentas. TLS protege el tráfico en tránsito y puede autenticar al servidor si se valida su certificado \cite{tls}. El certificado autofirmado de la demo permite verificar que hay cifrado en el canal local, pero la prueba no verifica una cadena pública de confianza.
+
+\paragraph{Autenticación, autorización y trazabilidad.} La autenticación establece qué cuenta inició sesión. La autorización comprueba qué puede hacer esa cuenta. En Olist Lab, Flask permite a lectores consultar los indicadores y reserva la auditoría a administradores. Los eventos permiten reconstruir accesos, consultas y fallos. Su valor depende de limitar el acceso y acordar plazos de conservación.
+
+\paragraph{Minimización y reidentificación.} Quitamos los identificadores del cliente de las salidas y agrupamos los resultados. La vinculación por fechas, ubicación o identificadores persistentes puede permitir reidentificación si alguien dispone de otra fuente. Una agrupación pequeña también puede revelar información por inferencia. Por eso la DPIA evalúa el conjunto original, la base y la salida pública por separado.
+
+\section{Requerimientos de seguridad}
+\label{sec:requisitos-seguridad}
+La tabla corresponde al prototipo académico. La evidencia funcional se registró con cuentas desechables y una base restaurada de forma temporal. El entorno con TLS se vinculó a la interfaz local.
+
+{\small
+\begin{longtable}{@{}P{.078\textwidth}P{.25\textwidth}P{.31\textwidth}P{.27\textwidth}@{}}
+\caption{Requerimientos de seguridad, evidencia y alcance.}\\
+\toprule
+\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
+\midrule
+\endhead
+S01 & Proteger la base en reposo con SQLCipher y una clave local. & La cabecera no es la de SQLite en claro. SQLCipher abre la copia y permite contar 96\,470 filas. & La clave y el archivo residen en el mismo equipo. El ZIP original sigue sin cifrar.\\
+S02 & Proteger las solicitudes en tránsito mediante HTTPS local. & Se negoció TLS 1.3 con certificado autofirmado, y la página de ingreso respondió HTTP 200. & La prueba verifica el canal local. El modo HTTP alternativo carece de cifrado.\\
+S03 & Almacenar credenciales como hashes verificables. & Dos cuentas de prueba guardaron hashes distintos de sus contraseñas y pudieron iniciar sesión. & Las cuentas de demo deben ser desechables y exclusivas del equipo.\\
+S04 & Exigir sesión y restringir la auditoría al administrador. & La API sin sesión redirigió al ingreso. Auditoría devolvió 403 al lector y 200 al administrador. POST de ingreso sin CSRF devolvió 400. & Las pruebas cubren las rutas y roles indicados.\\
+S05 & Registrar acciones de seguridad y consultas sin guardar contraseñas. & Se verificó la persistencia del ingreso y las consultas de prueba. La apertura de auditoría solo se registró para el administrador. & La retención y el borrado periódico siguen pendientes.\\
+S06 & Recuperar una copia cifrada y rechazar archivos alterados. & Se restauraron 96\,470 entregas con \texttt{integrity\_check = ok}. Una copia modificada fue rechazada antes de crear la salida. & La recuperación depende de conservar las claves necesarias.\\
+S07 & Revisar el código con una herramienta de análisis estático. & Bandit emitió tres alertas B608 antes del ajuste y cero después, en los cinco módulos Python revisados. & El análisis no abarca dependencias, interfaz ni servidor de producción.\\
+S08 & Definir uso seguro, formación, respuesta y mejoras. & Se documentaron el procedimiento, el plan de incidentes y la recuperación. El guion incluye un ejercicio para ambos integrantes. & La sesión conjunta y su acta requieren participación del equipo.\\
+\bottomrule
+\end{longtable}
+}

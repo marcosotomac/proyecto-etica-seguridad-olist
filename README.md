@@ -15,7 +15,7 @@ Proyecto de **Ronal Jesus Condor Blas y Marco Soto Maceda**. Es una demostració
 Necesitas **Python 3.11**, **Node.js 22** y Git. Abre PowerShell en una carpeta de trabajo y clona el repositorio público:
 
 ```powershell
-git clone https://github.com/ronalforge/proyecto-etica-seguridad-olist.git
+git clone https://github.com/ronaljcb/proyecto-etica-seguridad-olist.git
 cd proyecto-etica-seguridad-olist
 py -m pip install -r requirements.txt
 New-Item -ItemType Directory -Force data | Out-Null
@@ -72,4 +72,4 @@ Si ya tenías una base SQLite sin cifrar, detén el servidor y ejecuta `py migra
 - [Presentación](informe/Presentacion_Tipo2.pdf) y [guion de la demostración](informe/Demo_Tipo2.md).
 - Evidencias: [reporte Bandit](informe/bandit-final.json) y [resultados de verificación](informe/verificacion-final.txt).
 
-El informe se compila desde `informe/Informe_Olist.tex` e incluye `informe/Final_Tipo2.tex`.
+El informe se compila desde `informe/Informe_Olist.tex`. Los capítulos y las imágenes están en la misma carpeta.

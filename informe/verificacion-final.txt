@@ -1,6 +1,8 @@
-Cabecera operativa no corresponde a SQLite en claro
-Respaldo cifrado: archivo temporal
-Restauracion comprobada: archivo temporal
-Restauracion: 96470 entregas
-Sin sesion: 302; auditoria lector/admin: 403/200
-Filtro general/MA/ZZ: 96470/717/0; formato invalido: 400
+S01 Base operativa: no tiene cabecera SQLite en claro.
+S06 Copia restaurada: integrity_check = ok; 96470 entregas.
+S06 Copia modificada: AES-GCM la rechazo antes de escribir la salida.
+S03 Cuentas desechables: hashes verificables; inicio de sesion correcto para ambos roles.
+S04 API sin sesion: 302; auditoria lector/admin: 403/200; POST sin CSRF: 400.
+S05 Persistencia de eventos: inicio de sesion y consultas; audit_view solo para admin.
+F02 Consultas general/MA/ZZ: 96470/717/0; formato invalido: 400.
+S02 HTTPS local: TLSv1.3, TLS_AES_256_GCM_SHA384, certificado presente, GET /login = 200.

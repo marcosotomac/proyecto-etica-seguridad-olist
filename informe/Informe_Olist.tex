@@ -65,14 +65,14 @@
 {\normalsize\bfseries Enlaces del proyecto\par}
 \vspace{.3cm}
 {\small Repositorio y código fuente\par}
-{\small\url{https://github.com/ronalforge/proyecto-etica-seguridad-olist}\par}
+{\small\url{https://github.com/ronaljcb/proyecto-etica-seguridad-olist}\par}
 \vspace{.35cm}
 {\small Informe publicado en GitHub Pages\par}
-{\small\url{https://marcosotomac.github.io/proyecto-etica-seguridad-olist/}\par}
+{\small\url{https://ronaljcb.github.io/proyecto-etica-seguridad-olist/}\par}
 \vfill
 {\large Lima, Perú\par}
 \vspace{.2cm}
-{\large Septiembre de 2026\par}
+{\large Noviembre de 2026\par}
 \vspace*{.5cm}
 \end{titlepage}
 
@@ -81,7 +81,7 @@
 \begingroup
 \small
 \setstretch{1}
-\setlength{\cftbeforesecskip}{5pt}
+\setlength{\cftbeforesecskip}{3pt}
 \tableofcontents
 \endgroup
 \clearpage
@@ -172,6 +172,8 @@ La tasa global sirve como referencia para leer las desagregaciones, no como una 
 
 En 2018 hay 641 pedidos comprados en feriado nacional, de los cuales 37 fueron tardíos (5.8\,\%). En los demás días del mismo año hay 52\,136 pedidos y 4\,041 tardíos (7.8\,\%). La comparación es desigual en tamaño y no controla por estacionalidad, estado, tipo de producto ni operador logístico; \textbf{no se interpreta como efecto causal}. Cuando un grupo filtrado por estado contiene menos de 30 pedidos, el panel oculta su porcentaje de feriados y muestra el tamaño de la muestra.
 
+\input{Marco_Seguridad}
+
 \section{Requerimientos y diseño de la solución}
 \subsection{Requerimientos funcionales}
 \begin{table}[H]
@@ -238,10 +240,8 @@ El backend reconoce los roles \texttt{admin}, \texttt{analyst} y \texttt{reader}
 
 El registro almacena fecha UTC, nombre de usuario y acción (ingreso, fallo, bloqueo, salida o consulta), sin registrar contraseñas. La página administrativa presenta los últimos 100 eventos; ello \textbf{no significa que la tabla conserve solo 100}. No se ha implementado retención ni borrado automático de logs. Una política de producción deberá fijar acceso, plazo de conservación, exportación y revisión periódica.
 
-\subsection{Protección de datos y marco de referencia}
-El hecho de que Olist publique los datos no autoriza cualquier uso posterior. Se adopta la minimización y se muestran resultados agregados para evitar republicar registros y ubicaciones exactas. Si el prototipo llegara a tratar datos personales reales en Perú, el responsable tendría que evaluar la Ley N.\textsuperscript{o} 29733 y su reglamento aprobado por D. S. N.\textsuperscript{o} 016-2024-JUS, entre otras obligaciones aplicables \cite{peru}. La mención de estas normas no equivale a una declaración de cumplimiento legal ni resuelve por sí sola la posible aplicación de normas brasileñas. Como referencia de gestión se utiliza el ciclo gobernar, identificar, proteger, detectar, responder y recuperar del NIST CSF 2.0 \cite{nistcsf}.
-
 \section{Estrategia de uso seguro, políticas y formación}
+\label{sec:politicas}
 \subsection{Política propuesta para el equipo}
 Esta política se formula para la demostración y deberá ser aceptada y aplicada por ambos integrantes antes de compartir el material. Su cumplimiento organizativo todavía no se ha auditado.
 \begin{enumerate}
@@ -257,6 +257,7 @@ Esta política se formula para la demostración y deberá ser aceptada y aplicad
 Antes de cada presentación, ambos integrantes deben revisar el modo de servidor, la cuenta utilizada, las rutas del repositorio y las capturas previstas. Si se descubre un secreto en un commit, debe dejar de distribuirse ese repositorio y rotarse el secreto; borrar solo el archivo actual no elimina su historial. Se propone una sesión breve de capacitación entre integrantes con cuatro ejercicios: reconocer un dato potencialmente identificable, distinguir HTTP local de HTTPS validado, restaurar un respaldo de prueba y ensayar cómo reportar una exposición accidental. La sesión y sus asistentes deben registrarse cuando efectivamente se realice; \textbf{no se presenta como una capacitación ya ejecutada}.
 
 \section{Respuesta ante incidentes y recuperación}
+\label{sec:incidentes}
 \subsection{Plan básico}
 Se consideran incidentes la pérdida de la base, publicación accidental de ZIP o claves, acceso no autorizado y alteración de resultados. El plan siguiente es un procedimiento propuesto; no sustituye asesoría especializada ni fija plazos legales sin evaluar la jurisdicción aplicable. La secuencia está alineada de manera general con las recomendaciones de respuesta de NIST SP 800-61 Rev. 3 \cite{nistir}.
 
@@ -334,34 +335,12 @@ En la parte inferior se observa la distribución por estados (destacando AL con 
 \fuente{Captura del prototipo filtrado por parámetro geográfico (\texttt{?state=MA}).}
 \end{figure}
 
-\textbf{Detalle y validación:} Al aplicar el filtro para el estado de Maranhão (\texttt{MA}), la aplicación actualiza las cifras mediante la API: el total de pedidos analizados pasa a 717, la tasa de tardanza sube a 17.4\,\% (125 entregas tardías), el retraso medio se sitúa en 10.5 días y la satisfacción desciende a 4.17/5 (puntuales) y 2.18/5 (tardíos). La tabla mensual inferior se ajusta automáticamente para mostrar únicamente la serie temporal de este estado, verificando la consistencia de las consultas parametrizadas en el backend SQL sin riesgo de inyecciones.
+\textbf{Detalle y validación:} Al aplicar el filtro para el estado de Maranhão (\texttt{MA}), la aplicación actualiza las cifras mediante la API: el total de pedidos analizados pasa a 717, la tasa de tardanza sube a 17.4\,\% (125 entregas tardías), el retraso medio se sitúa en 10.5 días y la satisfacción desciende a 4.17/5 (puntuales) y 2.18/5 (tardíos). La tabla mensual inferior se ajusta automáticamente para mostrar únicamente la serie temporal de este estado, mostrando que el filtro actualiza los agregados del backend.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig3_auditoria_rbac.png}
-\caption{Control de acceso basado en roles (RBAC) y registro de auditoría.}
-\label{fig:auditoria_rbac}
-\fuente{Capturas del comportamiento del servidor según el rol de sesión.}
-\end{figure}
-
-\textbf{Detalle y validación:} En el panel superior (a), la ruta administrativa \path{/audit} es accesible para el rol \texttt{admin} (\texttt{marco}), listando en orden cronológico inverso los eventos de auditoría: marca de tiempo UTC, usuario y acción (\texttt{login}, \texttt{dashboard\_api}, \texttt{dashboard\_api:MA}, \texttt{audit\_view}). En el panel inferior (b), se evidencia la restricción de privilegios: cuando un usuario con rol \texttt{reader} (\texttt{lector}) intenta ingresar a dicha ruta, Flask bloquea la solicitud y devuelve un código \textbf{HTTP 403 Forbidden}, impidiendo el acceso a los registros de auditoría a roles no autorizados.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig4_seguridad_recuperacion.png}
-\caption{Pruebas técnicas de seguridad: cifrado en reposo, contingencia y HTTPS.}
-\label{fig:seguridad_recuperacion}
-\fuente{Captura de consola ejecutando pruebas de verificación.}
-\end{figure}
-
-\textbf{Detalle y validación:} En la sesión de consola se comprueban tres mecanismos de seguridad implementados:
-\begin{enumerate}
-\item \emph{Cifrado en reposo (SQLCipher):} La lectura inicial de los primeros 16 bytes de \path{instance/olist.db} mediante \texttt{xxd} muestra bytes aleatorios y confirma la ausencia de la cadena legible \texttt{SQLite format 3}. El cliente estándar \texttt{sqlite3} rechaza el archivo con \texttt{Error: file is not a database (26)}, mientras que la conexión mediante SQLCipher con la clave local de 256 bits (\path{instance/db.key}) abre la base y recupera los 96\,470 registros.
-\item \emph{Contingencia y recuperación:} Ejecución de \path{backup.py backup}, generando un respaldo cifrado y autenticado con AES-256-GCM (\path{instance/copia.enc}). Su posterior restauración con \path{backup.py restore} comprueba la integridad estructural (\texttt{PRAGMA integrity\_check = ok}) y confirma la recuperación exacta de las 96\,470 filas en una base independiente.
-\item \emph{Protección en tránsito (HTTPS local):} Negociación TLS 1.3 con cifrado AES-256-GCM y certificado autofirmado ad-hoc en Flask, validando la entrega de cabeceras de seguridad (\texttt{Cache-Control: no-store} y cookies con atributo \texttt{Secure}).
-\end{enumerate}
+La evidencia de auditoría, HTTPS y recuperación se presenta con los resultados de la ejecución en la sección~\ref{sec:requisitos-seguridad}. El archivo \path{informe/verificacion-final.txt} registra las respuestas y comprobaciones de la prueba final.
 
 \section{Recomendaciones de protección futura}
+\label{sec:mejoras}
 \begin{enumerate}
 \item \textbf{Separar y proteger las claves:} SQLCipher cifra la base operativa, pero su clave se guarda localmente; usar un gestor de secretos o el almacén protegido del sistema y documentar rotación y recuperación.
 \item \textbf{Desplegar con TLS de CA confiable:} elimina la advertencia propia del certificado temporal y permite protección en tránsito verificable para usuarios remotos. No exponer el modo HTTP local.
@@ -384,7 +363,7 @@ Este proyecto lo desarrollamos Ronal Jesus Condor Blas y Marco Soto Maceda. Basa
 \item Ejecutar pruebas conjuntas periódicas para verificar la restauración de respaldos y el comportamiento ante incidentes.
 \item Formalizar una lista de verificación previa a la entrega para constatar la exclusión de claves y la vigencia de la documentación técnica.
 \end{enumerate}
-El código fuente y la versión interactiva del informe se encuentran disponibles en el repositorio del proyecto (\url{https://github.com/ronalforge/proyecto-etica-seguridad-olist}) y en su correspondiente despliegue en GitHub Pages.
+El código fuente y la versión interactiva del informe se encuentran disponibles en el repositorio del proyecto (\url{https://github.com/ronaljcb/proyecto-etica-seguridad-olist}) y en su correspondiente despliegue en GitHub Pages.
 
 \input{Final_Tipo2}
 
@@ -394,12 +373,19 @@ El prototipo responde al caso de negocio con métricas históricas verificables 
 En materia de seguridad, la solución implementa controles visibles de autenticación, roles, auditoría, base operativa cifrada con SQLCipher, HTTPS local y respaldo cifrado con restauración. La evaluación también identifica límites sustanciales: el ZIP original no está cifrado, las claves siguen en el mismo equipo, el certificado es autofirmado y el modo HTTP local no ofrece confidencialidad de transporte. El informe distingue estas condiciones de la hoja de ruta futura. Por ello, el resultado es una \textbf{demostración académica funcional}, no un sistema listo para operar con datos personales reales en producción.
 
 \begin{thebibliography}{9}
-\bibitem{esquema} Curso DS3031. \emph{Esquema Proyecto de Ética y Seguridad de Datos -- Tipo 1}. Material de clase proporcionado por el profesor.
+\bibitem{esquema} Curso DS3031. \emph{Esquema Proyecto de Ética y Seguridad de Datos (Final) -- Tipo 2}. Material de clase proporcionado por el profesor.
 \bibitem{olist} Olist. \emph{Brazilian E-Commerce Public Dataset by Olist}. Kaggle. \url{https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce}. Consulta: septiembre de 2026.
 \bibitem{feriados} Ministério do Planejamento, Desenvolvimento e Gestão de Brasil. \emph{Portaria n.\textsuperscript{o} 468, de 22 de dezembro de 2017}. \url{https://www.gov.br/agricultura/pt-br/mailing/documentos/portaria-mpog-feriados-2018.pdf}. Consulta: septiembre de 2026.
 \bibitem{peru} Autoridad Nacional de Protección de Datos Personales. \emph{Decreto Supremo N.\textsuperscript{o} 016-2024-JUS: Reglamento de la Ley N.\textsuperscript{o} 29733}. \url{https://www.gob.pe/institucion/anpd/normas-legales/6554453-n-016-2024-jus}. Consulta: septiembre de 2026.
 \bibitem{nistcsf} National Institute of Standards and Technology. \emph{The NIST Cybersecurity Framework (CSF) 2.0}, 2024. \url{https://www.nist.gov/cyberframework}. Consulta: septiembre de 2026.
 \bibitem{nistir} National Institute of Standards and Technology. \emph{SP 800-61 Rev. 3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management}, 2025. \url{https://csrc.nist.gov/pubs/sp/800/61/r3/final}. Consulta: septiembre de 2026.
+
+\bibitem{leyperu} Congreso de la República del Perú. \emph{Ley N.\textsuperscript{o} 29733, Ley de Protección de Datos Personales}. \url{https://www.gob.pe/institucion/congreso-de-la-republica/normas-legales/243470-29733}.
+\bibitem{lgpd} Presidência da República do Brasil. \emph{Lei n.\textsuperscript{o} 13.709/2018, Lei Geral de Proteção de Dados Pessoais, texto compilado}. \url{https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm}.
+\bibitem{sqlcipher} Zetetic. \emph{SQLCipher Design}. \url{https://www.zetetic.net/sqlcipher/design/}.
+\bibitem{gcm} NIST. \emph{SP 800-38D: Galois/Counter Mode (GCM) and GMAC}. \url{https://csrc.nist.gov/pubs/sp/800/38/d/final}.
+\bibitem{owasp} OWASP. \emph{Password Storage Cheat Sheet}. \url{https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html}.
+\bibitem{tls} IETF. \emph{The Transport Layer Security Protocol Version 1.3}. \url{https://www.rfc-editor.org/info/rfc8446/}.
 \end{thebibliography}
 
 \end{document}

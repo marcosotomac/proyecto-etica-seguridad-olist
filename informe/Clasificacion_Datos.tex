@@ -1,0 +1,28 @@
+\subsection{Clasificación de datos y alcance normativo}
+\label{sec:clasificacion}
+La revisión de cabeceras identificó los campos que se indican a continuación. No inspeccionamos exhaustivamente el contenido de las reseñas ni atribuimos categorías sensibles a personas concretas. Clasificamos los datos según su posibilidad de vincularse con una persona natural y el daño que produciría su divulgación.
+
+{\small
+\begin{longtable}{@{}P{.16\textwidth}P{.40\textwidth}P{.37\textwidth}@{}}
+\caption{Clasificación por etapa del tratamiento.}\\
+\toprule
+\textbf{Etapa} & \textbf{Campos o ejemplos} & \textbf{Clasificación y tratamiento}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Etapa} & \textbf{Campos o ejemplos} & \textbf{Clasificación y tratamiento}\\
+\midrule
+\endhead
+ZIP fuente & Identificadores de clientes, pedidos y vendedores, ciudad, prefijo postal, coordenadas por prefijo, fechas, valor y tipo de pago, título y texto de reseña. & Los identificadores y los atributos enlazables pueden identificar indirectamente. Importes, ubicación y comentarios merecen acceso restringido. Los comentarios pueden revelar datos sensibles si el usuario menciona, por ejemplo, información de salud. No se importan.\\
+Base operativa & Identificador secuencial interno, fechas de compra y entrega, estado, identificador del vendedor, puntuación y retraso. & Datos transaccionales restringidos por posibilidad de cruce. El identificador de vendedor puede vincularse a una persona si opera como particular. Se excluyen coordenadas, pagos y texto libre.\\
+Cuentas y auditoría & Usuario, rol, hash de contraseña, marca UTC y acción. & Datos de operadores y material de autenticación de acceso restringido. El nombre de cuenta puede identificar a un integrante y el registro revela su actividad. Los hashes y claves no se publican.\\
+Panel e informe & Tasas y recuentos por estado, mes y feriado. & Agregados con menor riesgo. La comparación regional y la serie mensual filtran grupos menores de 30. El panel oculta la tasa de feriados con muestras pequeñas, aunque la API conserva esa salida agregada. Antes de ampliar la difusión se debe revisar el riesgo de inferencia.\\
+\bottomrule
+\end{longtable}
+}
+
+\paragraph{Perú.} Si desde Perú se tratan datos de personas identificadas o identificables, corresponde evaluar la Ley N.\textsuperscript{o} 29733 y el D. S. N.\textsuperscript{o} 016-2024-JUS según quién decide la finalidad y dónde se realiza el tratamiento \cite{leyperu,peru}. En el proyecto esto afecta especialmente el uso local del ZIP enlazable y los registros de operadores. Una fecha o un prefijo postal pueden contribuir a identificar a alguien sin pertenecer por sí solos a una categoría sensible. La ley peruana incluye, entre otros, los datos sobre salud, origen racial o étnico e ingresos económicos en su definición de datos sensibles. El monto de un pedido no mide el ingreso económico del comprador. Antes de ampliar el uso deben evaluarse la base aplicable, los avisos, la retención y el ejercicio de derechos.
+
+\paragraph{Brasil.} El artículo 3 de la LGPD exige evaluar las conexiones territoriales del tratamiento, incluida la recolección en Brasil. El origen brasileño y la disponibilidad pública justifican revisar la procedencia y la posibilidad de identificar titulares. El artículo 4.II.b remite a los artículos 7 y 11 para el tratamiento con fines exclusivamente académicos. El artículo 5 distingue el dato personal del sensible, y el artículo 12 considera la posibilidad de revertir la anonimización con medios razonables \cite{lgpd}. En consecuencia, tratamos el ZIP y los registros vinculables como material restringido. Cualquier ampliación exige comprobar la base de tratamiento de cada conjunto, especialmente si contiene información sensible en texto libre.
+
+\paragraph{Decisión de publicación.} Publicamos el informe, sus indicadores agregados y capturas con datos de demostración. El ZIP, las filas de la base, las claves y los logs de usuarios reales quedan fuera de la publicación. La DPIA documenta una evaluación académica de alcance y riesgos. La determinación formal del régimen aplicable y de los responsables corresponde a quienes definan un uso ulterior.

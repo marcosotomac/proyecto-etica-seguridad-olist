@@ -34,3 +34,19 @@ locales distintas, de al menos 12 caracteres.
 Ensayen juntos el recorrido, incluida una simulación de pérdida de la base.
 Registren fecha, asistentes, resultado de la restauración y acciones pendientes
 cuando lo realicen. No muestren contraseñas, claves ni el ZIP durante la exposición.
+
+## Evidencias por objetivo
+
+| Objetivo | Qué mostrar | Resultado esperado |
+| --- | --- | --- |
+| Consultar sin divulgar filas | Filtrar MA y comparar con el total | 717 vs. 96 470 pedidos |
+| Proteger acceso y registrar actividad | Ingresar con ambos roles y visitar Auditoría | Administrador 200, lector 403. Ingreso y consultas registrados |
+| Proteger el transporte | Mostrar conexión local por HTTPS | TLS 1.3 y certificado autofirmado |
+| Recuperar información | Restaurar a una ruta de prueba nueva | Integridad correcta. El respaldo alterado se rechazó en la verificación registrada |
+| Explicar privacidad | Mostrar clasificación y DPIA | Distinguir datos enlazables, sensibles potenciales y agregados |
+| Justificar los cambios de código | Comparar las dos pasadas de Bandit | Tres alertas iniciales, cero en los cinco módulos revisados |
+
+Para la formación, alternen los roles de operador y observador y simulen
+una pérdida de la base. Comprueben qué claves se necesitan y cómo reportarían
+el incidente. Al terminar, dejen constancia de la fecha, asistentes, resultados
+y acuerdos en el registro del equipo.

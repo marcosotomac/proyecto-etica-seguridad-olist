@@ -1,56 +1,131 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[spanish]{babel}
-\usetheme{Madrid}
-\title{Olist Lab: análisis seguro de entregas}
-\subtitle{Proyecto final DS3031 — Tipo 2}
-\author{Ronal Jesús Condor Blas \and Marco Soto Maceda}
-\date{}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{ink}{HTML}{111827}
+\definecolor{muted}{HTML}{475569}
+\definecolor{teal}{HTML}{087F72}
+\definecolor{mist}{HTML}{E6F5F1}
+\setbeamercolor{normal text}{fg=ink,bg=white}
+\setbeamercolor{frametitle}{fg=ink}
+\setbeamercolor{structure}{fg=teal}
+\setbeamercolor{block body}{bg=mist,fg=ink}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{\hspace{1em}\scriptsize\color{muted} OLIST LAB / DS3031\hfill\insertframenumber\hspace{1em}\vspace{.6em}}
+\newcommand{\kpi}[2]{\begin{minipage}[t]{.30\textwidth}\color{teal}\LARGE\bfseries #1\par\small\normalfont\color{muted}#2\end{minipage}}
+\tikzset{olistbox/.style={draw=teal,fill=mist,rounded corners=5pt,align=center,minimum height=1.05cm,text width=2.35cm,font=\small},flow/.style={-{Stealth},thick,draw=teal}}
 \begin{document}
-\frame{\titlepage}
-\begin{frame}{El problema}
-¿Cómo explorar demoras y satisfacción sin difundir registros individuales?
-\begin{itemize}
-\item Integramos pedidos históricos de Olist y feriados nacionales de Brasil.
-\item 96\,470 pedidos analizados. El 6.8\,\% llegó tarde.
-\item El filtro regional orienta la investigación. La comparación no establece causalidad.
-\end{itemize}
+{
+\setbeamercolor{normal text}{fg=white,bg=ink}
+\begin{frame}[plain]
+\color{white}
+\small DS3031 · PROYECTO FINAL · TIPO 2
+\vfill
+{\fontsize{35}{40}\selectfont\bfseries Olist Lab\par}
+\medskip
+{\Large Cómo analizar entregas sin exponer\par registros individuales}
+\vfill
+\small Ronal Jesús Condor Blas \quad / \quad Marco Soto Maceda
 \end{frame}
-\begin{frame}{Lo que construimos en el avance}
-\begin{itemize}
-\item React consulta indicadores agregados a través de Flask.
-\item SQLCipher protege la base operativa. Las contraseñas se almacenan con hash.
-\item La auditoría se reserva al administrador. HTTPS local usa un certificado autofirmado.
-\item El respaldo usa AES-256-GCM y se restaura en una ruta separada.
-\end{itemize}
+}
+\begin{frame}{¿Dónde conviene investigar las demoras?}
+\kpi{96\,470}{Pedidos analizados}\hfill
+\kpi{6.8\,\%}{Entregas tardías}\hfill
+\kpi{10.6 días}{Retraso medio entre las tardías}
+\medskip
+\begin{columns}[c,onlytextwidth]
+\column{.65\textwidth}
+\includegraphics[width=\linewidth,height=4.0cm,keepaspectratio]{fig1_kpi_general.png}
+\column{.32\textwidth}
+\small El panel compara regiones y meses. Los datos históricos orientan dónde investigar. Las diferencias observadas no demuestran causalidad.
+\end{columns}
 \end{frame}
-\begin{frame}{Qué agregamos para el final}
-\begin{itemize}
-\item Bandit marcó tres consultas construidas con fragmentos SQL.
-\item Reemplazamos esos fragmentos por consultas fijas con parámetros.
-\item Segunda pasada: 376 líneas Python revisadas, cero alertas dentro del alcance.
-\item Comprobamos filtros, permisos y restauración sobre una copia temporal.
-\end{itemize}
+\begin{frame}{Del archivo original al panel}
+\centering
+\begin{tikzpicture}[node distance=6mm]
+\node[olistbox] (source) {Olist + feriados\\\scriptsize Archivos de origen};
+\node[olistbox,right=of source] (db) {SQLCipher\\\scriptsize Base cifrada};
+\node[olistbox,right=of db] (api) {Flask\\\scriptsize Sesión y roles};
+\node[olistbox,right=of api] (web) {React\\\scriptsize Indicadores agregados};
+\node[olistbox,below=of db] (backup) {AES-256-GCM\\\scriptsize Respaldo autenticado};
+\draw[flow] (source)--(db);
+\draw[flow] (db)--(api);
+\draw[flow] (api)--(web);
+\draw[flow] (db)--(backup);
+\end{tikzpicture}
+\bigskip
+
+\small El panel muestra agregados. La auditoría requiere el rol de administrador.
 \end{frame}
-\begin{frame}{Privacidad y riesgos residuales}
-\begin{itemize}
-\item La DPIA cubre a compradores, vendedores y operadores.
-\item Reducimos la exposición mediante minimización y agregación.
-\item El ZIP original sigue en claro y las claves permanecen en el mismo equipo.
-\item Antes de ampliar el alcance: separar custodia, reducir retención y revisar grupos pequeños.
-\end{itemize}
+\begin{frame}{Qué cambió después de revisar el código}
+\centering
+\begin{tikzpicture}[node distance=9mm]
+\node[olistbox,text width=3cm] (a) {Primera pasada\\\bfseries 3 alertas B608};
+\node[olistbox,text width=3cm,right=of a] (b) {Cambio en Flask\\\bfseries Consultas SQL fijas};
+\node[olistbox,text width=3cm,right=of b] (c) {Segunda pasada\\\bfseries 0 alertas};
+\draw[flow] (a)--(b);
+\draw[flow] (b)--(c);
+\end{tikzpicture}
+\bigskip
+\begin{block}{Verificación}
+\small El filtro por Maranhão sigue devolviendo 717 pedidos. Bandit revisó cinco archivos Python.
+\end{block}
 \end{frame}
-\begin{frame}{Demostración}
+\begin{frame}{DPIA: ¿a quién afecta cada riesgo?}
+\renewcommand{\arraystretch}{1.55}
+\small
+\begin{tabular}{@{}p{.22\textwidth}p{.30\textwidth}p{.40\textwidth}@{}}
+\bfseries Personas & \bfseries Riesgo & \bfseries Control o mejora \\ \hline
+Compradores & Reidentificación en grupos pequeños & Publicar agregados y revisar tamaños de grupo. \\
+Vendedores & Decisiones injustas a partir de métricas históricas & Mostrar denominadores y explicar los límites del análisis. \\
+Operadores & Exposición de cuentas y trazas & Restringir auditoría y definir plazos de retención. \\
+\end{tabular}
+\medskip
+
+\color{teal}\bfseries Riesgo residual: el ZIP original sigue en claro y las claves se guardan en el mismo equipo.
+\end{frame}
+\begin{frame}{Qué datos podemos compartir}
+\small
+\begin{columns}[T,onlytextwidth]
+\column{.48\textwidth}
+\begin{block}{Acceso restringido}
+ZIP con identificadores enlazables, ubicaciones y reseñas. El texto libre podría revelar datos sensibles. También se restringen la base y los registros de operadores.
+\end{block}
+\column{.48\textwidth}
+\begin{block}{Publicación}
+El informe muestra tasas y recuentos agregados. Los grupos pequeños requieren revisar el riesgo de inferencia antes de ampliar la difusión.
+\end{block}
+\end{columns}
+\medskip
+\textbf{Marcos evaluados.} Ley 29733 y su reglamento en Perú, y LGPD para datos recolectados en Brasil. La DPIA distingue los riesgos de cada etapa.
+\end{frame}
+\begin{frame}{Demostración: consultar, controlar y recuperar}
+\begin{columns}[c,onlytextwidth]
+\column{.50\textwidth}
+\includegraphics[width=\linewidth,height=4.55cm,keepaspectratio]{fig2_filtro_estado.png}
+\column{.46\textwidth}
 \begin{enumerate}
-\item Ingresar y filtrar Maranhão. Comparar 96\,470 pedidos generales con 717 del estado.
-\item Mostrar auditoría como administrador y acceso denegado como lector.
-\item Mostrar revisión de Bandit, HTTPS local y restauración con integridad comprobada.
+\item Entrar por HTTPS local y filtrar Maranhão.
+\item Abrir Auditoría como administrador y mostrar el 403 como lector.
+\item Restaurar el respaldo en otra ruta y comprobar la integridad.
 \end{enumerate}
+\end{columns}
 \end{frame}
-\begin{frame}{Cierre}
-\begin{itemize}
-\item La restauración comprobada aporta más evidencia que generar una copia.
-\item Los denominadores y las limitaciones deben acompañar a los indicadores.
-\item Para el siguiente proyecto proponemos revisión cruzada y ensayos de recuperación.
-\end{itemize}
+\begin{frame}{La restauración conserva los 96\,470 pedidos}
+\centering
+\begin{tikzpicture}[node distance=8mm]
+\node[olistbox] (a) {Base cifrada};
+\node[olistbox,right=of a] (b) {Respaldo\\AES-256-GCM};
+\node[olistbox,right=of b] (c) {Copia restaurada};
+\node[olistbox,right=of c] (d) {Integridad\\comprobada};
+\draw[flow] (a)--(b);
+\draw[flow] (b)--(c);
+\draw[flow] (c)--(d);
+\end{tikzpicture}
+\bigskip
+
+\small La copia alterada se rechazó antes de escribir la salida. Para una siguiente iteración, separaríamos las claves de la base.
 \end{frame}
 \end{document}

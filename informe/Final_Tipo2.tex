@@ -3,7 +3,7 @@ En el avance implementamos la importación de datos, el panel, la autenticación
 
 \begin{itemize}
 \item \textbf{Funcionalidad.} El panel permite consultar indicadores agregados, filtrar por estado y comparar períodos. El backend protege la auditoría con un rol administrativo y permite restaurar una copia cifrada en una ruta separada.
-\item \textbf{Seguridad.} Aplicamos SQLCipher en reposo, hash a las contraseñas, HTTPS local con certificado autofirmado, control de acceso y registros de auditoría. Las secciones 7, 8 y 10 recogen las políticas, la formación propuesta, el plan ante incidentes y las mejoras futuras.
+\item \textbf{Seguridad.} Aplicamos SQLCipher en reposo, hash a las contraseñas, HTTPS local con certificado autofirmado, control de acceso y registros de auditoría. Las secciones~\ref{sec:politicas}, \ref{sec:incidentes} y \ref{sec:mejoras} recogen las políticas, la formación, el plan ante incidentes y las mejoras futuras.
 \item \textbf{Privacidad y ética.} Evaluamos la necesidad de cada dato, los riesgos para las personas y las medidas para reducirlos a lo largo del ciclo de vida. Limitamos la publicación a documentación y resultados agregados.
 \end{itemize}
 
@@ -12,13 +12,15 @@ Ejecutamos Bandit 1.9.4 sobre \texttt{app.py}, \texttt{backup.py}, \texttt{db\_c
 
 La segunda pasada revisó 376 líneas y reportó cero alertas, sin excluir pruebas ni agregar supresiones. Conservamos el resultado en \texttt{informe/bandit-final.json}. Este análisis abarca el código Python indicado. La revisión de dependencias, el frontend y la configuración de producción requieren verificaciones propias.
 
-En una copia temporal de la base, verificamos que la consulta sin sesión redirige al ingreso, el lector recibe 403 en auditoría y el administrador recibe 200. La API devolvió 96\,470, 717 y 0 pedidos para el panel general, MA y ZZ, respectivamente, y devolvió 400 para un formato inválido. La restauración pasó \texttt{integrity\_check} y conservó 96\,470 filas. Las sesiones para la comprobación de roles se prepararon con el cliente de Flask. El ingreso mediante el formulario es parte de la demostración en vivo.
+En una copia temporal de la base, verificamos que la consulta sin sesión redirige al ingreso, el lector recibe 403 en auditoría y el administrador recibe 200. La API devolvió 96\,470, 717 y 0 pedidos para el panel general, MA y ZZ, respectivamente, y devolvió 400 para un formato inválido. La restauración pasó \texttt{integrity\_check} y conservó 96\,470 filas. En la revisión final, ambas cuentas desechables iniciaron sesión mediante un POST al formulario con el token CSRF emitido por el servidor. Verificamos los hashes y los eventos de auditoría en la copia, y confirmamos que un archivo de respaldo alterado se rechazaba antes de escribir la salida. Un servidor local temporal negoció TLS 1.3 con \texttt{TLS\_AES\_256\_GCM\_SHA384} y devolvió HTTP 200 al consultar el ingreso. La comprobación usó el certificado autofirmado de la demo sin validar una cadena de confianza.
 
 \section{Evaluación de Impacto en la Protección de Datos (DPIA)}
 \subsection{Alcance, flujo y necesidad}
 Esta evaluación cubre el prototipo académico local y la publicación de su informe. Los afectados potenciales son compradores representados en el conjunto histórico, vendedores cuyo identificador se importa y operadores cuyas cuentas y acciones quedan en auditoría. El equipo gestiona el entorno de demostración. El profesor recibe el informe y presencia la demo.
 
 El flujo va desde el ZIP de Olist y el calendario de feriados hasta la importación, la base cifrada, la API de agregados, el panel y el respaldo. La publicación web incluye cifras agregadas, documentación y capturas. El ZIP original queda local. Para comparar entregas se necesitan fechas, estado y puntuaciones. El identificador de vendedor se conserva para una posible ampliación, pero no es necesario para los indicadores actuales. Proponemos retirarlo en una futura migración antes de ampliar el uso del sistema. El registro de auditoría requiere un identificador de cuenta, una acción y una marca de tiempo.
+
+\input{Clasificacion_Datos}
 
 \subsection{Riesgos y controles}
 Usamos una valoración cualitativa que combina probabilidad e impacto. Un riesgo alto exige tratamiento antes de ampliar el alcance. Uno medio requiere seguimiento. Uno bajo se acepta para la demo local mientras se mantengan sus controles.
