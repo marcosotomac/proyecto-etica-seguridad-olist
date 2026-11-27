@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from db_crypto import INSTANCE, ROOT, connect as encrypted_connect, private_dir
 
 ROLES = ("admin", "analyst", "reader")
+USER_LIMIT, IP_LIMIT = 5, 20  # intentos fallidos admitidos en 15 minutos
 
 private_dir(INSTANCE)
 KEY_FILE = INSTANCE / "secret.key"
@@ -36,6 +37,8 @@ def connect():
     db.execute("""CREATE TABLE IF NOT EXISTS login_attempts (
         id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         username TEXT NOT NULL)""")
+    if "ip" not in {row[1] for row in db.execute("PRAGMA table_info(login_attempts)")}:
+        db.execute("ALTER TABLE login_attempts ADD COLUMN ip TEXT")
     return db
 
 
@@ -89,6 +92,10 @@ def headers(response):
     return response
 
 
+def client_ip():
+    return (request.remote_addr or "?")[:45]
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
@@ -97,9 +104,12 @@ def login():
         username = request.form.get("username", "").strip()[:80]
         password = request.form.get("password", "")
         with connect() as db:
+            db.execute("DELETE FROM login_attempts WHERE at < datetime('now', '-1 day')")
             by_user = db.execute("""SELECT count(*) FROM login_attempts WHERE username=?
                 AND at >= datetime('now', '-15 minutes')""", (username,)).fetchone()[0]
-        if by_user >= 5:
+            by_ip = db.execute("""SELECT count(*) FROM login_attempts WHERE ip=?
+                AND at >= datetime('now', '-15 minutes')""", (client_ip(),)).fetchone()[0]
+        if by_user >= USER_LIMIT or by_ip >= IP_LIMIT:
             audit("login_blocked", username)
             abort(429, "Demasiados intentos. Espera 15 minutos.")
         with connect() as db:
@@ -113,7 +123,7 @@ def login():
             audit("login", username)
             return redirect(url_for("dashboard"))
         with connect() as db:
-            db.execute("INSERT INTO login_attempts(username) VALUES (?)", (username,))
+            db.execute("INSERT INTO login_attempts(username, ip) VALUES (?,?)", (username, client_ip()))
         audit("login_failed", username)
         error = "Credenciales incorrectas"
     session["csrf"] = secrets.token_urlsafe(32)
