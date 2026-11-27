@@ -13,6 +13,7 @@ from db_crypto import INSTANCE, ROOT, connect as encrypted_connect, private_dir
 ROLES = ("admin", "analyst", "reader")
 MIN_GROUP = 30            # supresión de celdas pequeñas (riesgo de inferencia)
 USER_LIMIT, IP_LIMIT = 5, 20  # intentos fallidos admitidos en 15 minutos
+AUDIT_RETENTION_DAYS = 180
 
 private_dir(INSTANCE)
 KEY_FILE = INSTANCE / "secret.key"
@@ -250,8 +251,9 @@ def dashboard_api():
 def audit_view():
     with connect() as db:
         entries = db.execute("SELECT at, username, action FROM audit_log ORDER BY id DESC LIMIT 100").fetchall()
+        total = db.execute("SELECT count(*) FROM audit_log").fetchone()[0]
     audit("audit_view", session["username"])
-    return render_template("audit.html", entries=entries)
+    return render_template("audit.html", entries=entries, total=total, retention=AUDIT_RETENTION_DAYS)
 
 
 @app.errorhandler(429)
@@ -269,16 +271,26 @@ def create_user(username, password, role):
         db.execute("INSERT INTO users VALUES (?,?,?)", (username, generate_password_hash(password), role))
 
 
+def purge_audit(days):
+    with connect() as db:
+        removed = db.execute("DELETE FROM audit_log WHERE at < datetime('now', ?)", (f"-{int(days)} days",)).rowcount
+    audit(f"audit_purged:{removed}:>{int(days)}d", "console")
+    return removed
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Olist Lab")
-    parser.add_argument("command", choices=["run", "run-local-http", "create-user"])
+    parser.add_argument("command", choices=["run", "run-local-http", "create-user", "purge-audit"])
     parser.add_argument("--username")
     parser.add_argument("--role", default="reader")
     parser.add_argument("--port", type=int, default=None)
+    parser.add_argument("--days", type=int, default=AUDIT_RETENTION_DAYS)
     args = parser.parse_args()
     if args.command == "create-user":
         create_user(args.username, getpass.getpass("Contraseña: "), args.role)
         print("Usuario creado")
+    elif args.command == "purge-audit":
+        print(f"Eventos eliminados (más de {args.days} días): {purge_audit(args.days)}")
     elif args.command == "run-local-http":
         # Solo para ver el prototipo en navegadores que bloquean certificados autofirmados.
         app.config["SESSION_COOKIE_SECURE"] = False
