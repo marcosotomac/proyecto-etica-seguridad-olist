@@ -1,37 +1,74 @@
-\section{Entrega final: requisitos y validación}
-En el avance implementamos la importación de datos, el panel, la autenticación, la auditoría, el cifrado y la recuperación. En la entrega final revisamos la implementación con una herramienta de seguridad, ajustamos las consultas del panel y documentamos los riesgos de privacidad en una DPIA.
+\section{Entrega final: análisis de la implementación con herramientas de seguridad}
+\label{sec:herramientas}
+A diferencia del avance, la entrega final exige aplicar herramientas de seguridad para analizar la implementación. Combinamos análisis estático (SAST), análisis de composición de software (SCA), búsqueda de secretos y pruebas automatizadas. Todo se ejecuta con un solo comando, \texttt{scripts/security\_scan.sh}, y además en GitHub Actions (\path{.github/workflows/security.yml}) en cada \emph{push} y cada lunes, para detectar vulnerabilidades publicadas después de la entrega. Dependabot propone actualizaciones semanales de dependencias.
 
-\begin{itemize}
-\item \textbf{Funcionalidad.} El panel permite consultar indicadores agregados, filtrar por estado y comparar períodos. El backend protege la auditoría con un rol administrativo y permite restaurar una copia cifrada en una ruta separada.
-\item \textbf{Seguridad.} Aplicamos SQLCipher en reposo, hash a las contraseñas, HTTPS local con certificado autofirmado, control de acceso y registros de auditoría. Las secciones~\ref{sec:politicas}, \ref{sec:incidentes} y \ref{sec:mejoras} recogen las políticas, la formación, el plan ante incidentes y las mejoras futuras.
-\item \textbf{Privacidad y ética.} Evaluamos la necesidad de cada dato, los riesgos para las personas y las medidas para reducirlos a lo largo del ciclo de vida. Limitamos la publicación a documentación y resultados agregados.
-\end{itemize}
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{P{2.2cm}P{1.6cm}Y Y P{1.5cm}}
+\toprule
+Herramienta & Tipo & Hallazgo & Corrección & Final\\
+\midrule
+Bandit 1.9 & SAST & 3 $\times$ B608 (SQL dinámico) en el panel, primera pasada. & Consultas fijas con parámetros con nombre. & 0\\
+Bandit 1.9 & SAST & 4 $\times$ B101 en \texttt{pki.py}: la validación del certificado usaba \texttt{assert}, que \texttt{python -O} elimina; 1 $\times$ B105 (falso positivo). & Validaciones explícitas que lanzan \texttt{ValueError}. & 0 en 859 líneas\\
+npm audit & SCA JS & 15 vulnerabilidades (7 altas) en dependencias de producción: \texttt{undici}, \texttt{hono}, \texttt{zod}, \texttt{systeminformation}, arrastradas por el CLI \texttt{shadcn} y el paquete \texttt{cn}. & \texttt{shadcn} pasa a desarrollo; \texttt{cn} se reemplaza por 3 líneas propias; \texttt{npm audit fix}. & 0\\
+pip-audit & SCA Python & Sin vulnerabilidades conocidas en Flask, cryptography y sqlcipher3. & --- & 0\\
+gitleaks 8 & Secretos & Sin alertas en el historial, pero la revisión manual halló dos contraseñas de demo en un script (sección~\ref{sec:incidente-real}). & Credenciales leídas del entorno y rotadas. & Invalidadas\\
+pytest & Pruebas & 35 pruebas de S01--S06, P01 y F1--F3 sobre datos sintéticos, incluidas la revocación de sesiones y la supresión complementaria. & --- & 35/35\\
+\texttt{verify\_live} & E2E HTTPS & 20 comprobaciones sobre la instancia real con TLS validado por la CA. & --- & 20/20\\
+\bottomrule
+\end{tabularx}
+\caption{Herramientas aplicadas, hallazgos y correcciones. Reportes en \texttt{informe/evidencias/}.}
+\label{tab:herramientas}
+\end{table}
 
-\subsection{Análisis estático y comprobación posterior}
-Ejecutamos Bandit 1.9.4 sobre \texttt{app.py}, \texttt{backup.py}, \texttt{db\_crypto.py}, \texttt{import\_data.py} y \texttt{migrate\_db.py}. La primera pasada marcó tres alertas B608 de severidad media en las consultas de resumen, serie mensual y feriados. Los valores del filtro ya se pasaban como parámetros y las partes interpoladas eran constantes. Aun así, reemplazamos la construcción dinámica por tres consultas fijas con un parámetro opcional, de modo que la separación entre SQL y datos quede explícita.
+Tres aprendizajes surgen de este análisis. Primero, la mayor superficie de riesgo no estaba en nuestro código, sino en dependencias: un CLI de desarrollo declarado como dependencia de producción arrastraba un servidor HTTP y un SDK completos. Segundo, Bandit detectó un error sutil en código nuevo: un \texttt{assert} de seguridad desaparece con optimizaciones. Tercero, ninguna herramienta reemplaza la revisión humana: gitleaks no marcó contraseñas legibles porque no coinciden con sus patrones genéricos.
 
-La segunda pasada revisó 376 líneas y reportó cero alertas, sin excluir pruebas ni agregar supresiones. Conservamos el resultado en \texttt{informe/bandit-final.json}. Este análisis abarca el código Python indicado. La revisión de dependencias, el frontend y la configuración de producción requieren verificaciones propias.
+\subsection{Validación de extremo a extremo}
+\label{sec:validacion}
+\texttt{scripts/verify\_live.py} levanta el servidor real con el certificado de la CA propia, crea dos cuentas desechables con contraseñas aleatorias que nunca se imprimen, ejecuta solicitudes HTTPS reales y elimina las cuentas al terminar. La figura~\ref{fig:verificacion} reproduce su salida sin edición. Las 20 comprobaciones fueron correctas: cifrado y minimización de la base, sellado del ZIP, TLS 1.3 verificado, rechazo de clientes sin la CA, HSTS, control de sesión, CSRF, hash, roles, indicadores (96\,470 general; 717 en MA), validación de entrada, supresión de grupos pequeños, bloqueo por fuerza bruta, auditoría y restauración con detección de alteraciones.
 
-En una copia temporal de la base, verificamos que la consulta sin sesión redirige al ingreso, el lector recibe 403 en auditoría y el administrador recibe 200. La API devolvió 96\,470, 717 y 0 pedidos para el panel general, MA y ZZ, respectivamente, y devolvió 400 para un formato inválido. La restauración pasó \texttt{integrity\_check} y conservó 96\,470 filas. En la revisión final, ambas cuentas desechables iniciaron sesión mediante un POST al formulario con el token CSRF emitido por el servidor. Verificamos los hashes y los eventos de auditoría en la copia, y confirmamos que un archivo de respaldo alterado se rechazaba antes de escribir la salida. Un servidor local temporal negoció TLS 1.3 con \texttt{TLS\_AES\_256\_GCM\_SHA384} y devolvió HTTP 200 al consultar el ingreso. La comprobación usó el certificado autofirmado de la demo sin validar una cadena de confianza.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig4_seguridad_recuperacion.png}
+\caption{Salida real de \texttt{scripts/verify\_live.py} sobre la instancia de la demo.}
+\label{fig:verificacion}
+\fuente{\path{informe/evidencias/verificacion-final.txt}.}
+\end{figure}
 
 \section{Evaluación de Impacto en la Protección de Datos (DPIA)}
+\label{sec:dpia}
 \subsection{Alcance, flujo y necesidad}
-Esta evaluación cubre el prototipo académico local y la publicación de su informe. Los afectados potenciales son compradores representados en el conjunto histórico, vendedores cuyo identificador se importa y operadores cuyas cuentas y acciones quedan en auditoría. El equipo gestiona el entorno de demostración. El profesor recibe el informe y presencia la demo.
+Esta evaluación cubre el prototipo académico local y la publicación de su informe. Los afectados potenciales son los compradores representados en el conjunto histórico, los vendedores, los operadores cuyas cuentas y acciones quedan en auditoría y el propio equipo. El equipo gestiona el entorno de demostración; el profesor recibe el informe y presencia la demo.
 
-El flujo va desde el ZIP de Olist y el calendario de feriados hasta la importación, la base cifrada, la API de agregados, el panel y el respaldo. La publicación web incluye cifras agregadas, documentación y capturas. El ZIP original queda local. Para comparar entregas se necesitan fechas, estado y puntuaciones. El identificador de vendedor se conserva para una posible ampliación, pero no es necesario para los indicadores actuales. Proponemos retirarlo en una futura migración antes de ampliar el uso del sistema. El registro de auditoría requiere un identificador de cuenta, una acción y una marca de tiempo.
+El flujo va desde el ZIP de Olist y el calendario de feriados hasta la importación, la base cifrada, la API de agregados, el panel y el respaldo. Para comparar entregas se necesitan fechas, estado federado y puntuaciones. En el avance conservábamos el identificador del vendedor ``para una posible ampliación''; la DPIA concluyó que no era necesario para la finalidad, y en la entrega final \textbf{lo retiramos del importador}. Hoy la base no contiene identificadores de clientes, pedidos ni vendedores. El registro de auditoría requiere un identificador de cuenta, una acción y una marca de tiempo; la IP se guarda solo en la tabla de intentos fallidos y se borra tras 24 horas.
 
 \input{Clasificacion_Datos}
 
 \subsection{Riesgos y controles}
-Usamos una valoración cualitativa que combina probabilidad e impacto. Un riesgo alto exige tratamiento antes de ampliar el alcance. Uno medio requiere seguimiento. Uno bajo se acepta para la demo local mientras se mantengan sus controles.
+Usamos una valoración cualitativa de probabilidad e impacto. Un riesgo alto exige tratamiento antes de ampliar el alcance; uno medio requiere seguimiento; uno bajo se acepta para la demo local mientras se mantengan sus controles.
 
-\begin{description}
-\item[Exposición del ZIP o de las claves.] Afecta a compradores, vendedores y operadores. Riesgo inicial alto. La minimización, SQLCipher, el respaldo cifrado y la exclusión del repositorio reducen la exposición. El ZIP en claro y la custodia conjunta de claves mantienen un riesgo residual medio en el entorno local. Para ampliarlo, separar claves, cifrar el ZIP y restringir acceso al equipo.
-\item[Reidentificación a partir de grupos pequeños.] Afecta a compradores y vendedores. Riesgo inicial alto. El panel muestra agregados y limita grupos en las vistas descritas en la sección de análisis. Los cruces de salidas y los casos pequeños aún requieren revisión. Riesgo residual medio. Antes de publicar datos adicionales, revisar tamaños y evitar resultados por individuo.
-\item[Exposición de cuentas y trazas.] Afecta al equipo y a operadores. Riesgo inicial alto. El hash, los roles y el acceso administrativo a auditoría reducen el acceso indebido. Riesgo residual medio por credenciales de demo publicadas y falta de borrado automático. Usar cuentas desechables exclusivamente locales y definir un plazo de retención antes de un uso real.
-\item[Interpretación injusta de indicadores.] Afecta a vendedores, regiones y operadores logísticos. Riesgo inicial medio. Mostramos denominadores y advertimos sobre cobertura temporal, reseñas ausentes y factores no controlados. Riesgo residual bajo para exploración académica. Las métricas sirven para plantear preguntas, no para sancionar individuos.
-\item[Pérdida de datos o del material de recuperación.] Afecta al equipo y a la continuidad de la demo. Riesgo inicial alto. El respaldo autenticado y la restauración verificada reducen el riesgo a medio. Una pérdida simultánea del equipo y las claves todavía impediría recuperar los datos.
-\end{description}
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{P{2.7cm}P{2.1cm}P{1.1cm}Y P{1.2cm}}
+\toprule
+Riesgo & Afectados & Inicial & Controles (E1 + EF) & Residual\\
+\midrule
+Exposición del ZIP o de las claves & Compradores, vendedores, operadores & Alto & Minimización, SQLCipher, ZIP sellado y borrado en claro, claves 0600 con carpeta separable, exclusión de Git, respaldo cifrado. & Medio-bajo\\
+Reidentificación por grupos pequeños o cruces & Compradores, vendedores & Alto & Solo agregados; supresión $k=30$ \emph{en el servidor}, no solo en la interfaz; sin identificadores en la base. & Bajo\\
+Exposición de cuentas y trazas & Equipo, operadores & Alto & scrypt, roles, sesión de 30 min, bloqueo por usuario e IP, retención de 180 días; contraseñas filtradas rotadas. & Medio\\
+Interpretación injusta de indicadores & Vendedores, regiones, operadores logísticos & Medio & Denominadores visibles; advertencias de causalidad, cobertura temporal y reseñas ausentes. & Bajo\\
+Pérdida de datos o del material de recuperación & Equipo, continuidad & Alto & Respaldo autenticado, rotación, restauración verificada, código en dos repositorios remotos. & Medio\\
+Suplantación del servidor (MITM local) & Usuarios del panel & Medio & CA propia, TLS $\geq$ 1.2, HSTS; un cliente sin la CA rechaza la conexión. & Bajo\\
+\bottomrule
+\end{tabularx}
+\caption{Riesgos, afectados y riesgo residual tras la entrega final.}
+\end{table}
 
-\subsection{Decisión, transparencia y seguimiento}
-La fuente pública no implica consentimiento para fines distintos al análisis académico. El panel explica el origen y período de los datos, y el informe describe qué campos se omiten, cómo se calculan los indicadores y qué sesgos limitan su interpretación. Para esta entrega acotamos el uso a la demo local con datos históricos y la difusión de agregados. El equipo debe revisar el material antes de compartirlo, conservar archivos locales durante el plazo acordado para el curso y reevaluar la DPIA si añade datos, cambia los destinatarios o despliega el backend fuera del equipo. El informe no registra una consulta a afectados ni una aprobación para un despliegue real.
+\subsection{Consideraciones éticas}
+\paragraph{Consentimiento y finalidad.} Que el conjunto sea público no implica que los compradores hayan consentido cualquier uso. Limitamos la finalidad a un análisis académico agregado y prohibimos en la política decisiones individuales sobre compradores o vendedores.
+\paragraph{Sesgo y equidad.} Las tasas por estado reflejan distancia, infraestructura y operadores, no la ``calidad'' de una región ni de sus habitantes. Las reseñas solo existen para quien decidió escribirlas; quien no reseña queda fuera del promedio, lo que puede sesgar la satisfacción observada. Por eso el panel muestra denominadores y el informe evita lenguaje causal.
+\paragraph{Transparencia.} El panel indica fuentes, período y supresión de grupos pequeños; el informe documenta qué campos se excluyen y cómo se calcula cada indicador; el código y las pruebas son públicos y reproducibles.
+\paragraph{Responsabilidad propia.} El incidente de credenciales (sección~\ref{sec:incidente-real}) mostró que un equipo pequeño también puede exponer secretos. Lo documentamos en lugar de ocultarlo.
+
+\subsection{Decisión y seguimiento}
+Aceptamos el riesgo residual para la demo local con datos históricos y la publicación de agregados. Antes de cualquier uso con datos reales o usuarios externos deberá reevaluarse esta DPIA: si se añaden datos, cambian los destinatarios o se despliega el backend fuera del equipo. El informe no registra consulta a afectados ni aprobación para un despliegue real.
