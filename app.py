@@ -6,14 +6,15 @@ from functools import wraps
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-from db_crypto import INSTANCE, ROOT, connect as encrypted_connect
+from db_crypto import INSTANCE, ROOT, connect as encrypted_connect, private_dir
 
 ROLES = ("admin", "analyst", "reader")
 
-INSTANCE.mkdir(parents=True, exist_ok=True)
+private_dir(INSTANCE)
 KEY_FILE = INSTANCE / "secret.key"
 if not KEY_FILE.exists():
     KEY_FILE.write_text(secrets.token_hex(32), encoding="ascii")
+    KEY_FILE.chmod(0o600)
 
 app = Flask(__name__)
 app.secret_key = KEY_FILE.read_text(encoding="ascii").strip()
