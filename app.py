@@ -264,9 +264,17 @@ def too_many(error):
 
 # --- Administración por consola (no expuesta en la web) -------------------------------------------
 
+def validate_password(password):
+    if len(password) < 12:
+        raise ValueError("La contraseña debe tener al menos 12 caracteres")
+    if password.lower() == password or not any(c.isdigit() for c in password):
+        raise ValueError("Usa mayúsculas, minúsculas y al menos un dígito")
+
+
 def create_user(username, password, role):
-    if role not in ROLES or not username or len(password) < 12:
-        raise ValueError("Usuario requerido, rol válido y contraseña de al menos 12 caracteres")
+    if role not in ROLES or not username:
+        raise ValueError("Usuario requerido y rol válido: " + ", ".join(ROLES))
+    validate_password(password)
     with connect() as db:
         db.execute("INSERT INTO users VALUES (?,?,?)", (username, generate_password_hash(password), role))
 
