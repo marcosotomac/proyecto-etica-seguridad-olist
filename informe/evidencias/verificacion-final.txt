@@ -1,0 +1,25 @@
+Olist Lab · verificación en vivo · 2026-11-27 14:40 UTC
+Instancia real: base SQLCipher, CA propia, HTTPS en 127.0.0.1. Cuentas desechables.
+
+[OK ] S01 Cabecera de la base: cd25134114049ed7… (no es 'SQLite format 3'); 96470 entregas con la clave.
+[OK ] S01 Columnas importadas: id, purchase_date, estimated_date, delivered_date, customer_state, review_score, delay_days, is_late.
+[OK ] S01 ZIP fuente sellado con AES-256-GCM (data/olist.zip.enc); no queda copia en claro.
+[OK ] S02 TLS verificado contra la CA propia: TLSv1.3, TLS_AES_256_GCM_SHA384, emisor 'Olist Lab Root CA'.
+[OK ] S02 Un cliente sin la CA instalada rechaza el certificado (no hay confianza implícita).
+[OK ] S02 HSTS presente en respuestas HTTPS.
+[OK ] S04 Sin sesión: panel 302 → /login; API 401.
+[OK ] S04 POST de ingreso sin CSRF: 400.
+[OK ] S03 Contraseñas guardadas como scrypt con sal única por cuenta.
+[OK ] S04 Ingreso del administrador con CSRF: 302.
+[OK ] S04 Ingreso del lector con CSRF: 302.
+[OK ] S04 Auditoría: admin 200, lector 403.
+[OK ] F02 General: 96470 pedidos, 6.8 % tardíos, 10.6 días, reseñas 4.29/2.27.
+[OK ] F02 Filtro MA: 717 pedidos, 17.4 % tardíos.
+[OK ] F02 Estado inexistente ZZ: 0 pedidos; formato inválido: 400.
+[OK ] P01 Supresión en servidor (filtro RR, k=30): tasa oculta para Día común n=22.
+[OK ] S04 5 fallos por usuario en 15 min → 429 incluso con la clave correcta.
+[OK ] S05 Eventos auditados: access_denied:/audit, audit_view, dashboard_api, dashboard_api:MA, dashboard_api:RR, dashboard_api:ZZ, invalid_filter, login, login_blocked, login_failed; sin contraseñas.
+[OK ] S06 Respaldo AES-256-GCM restaurado: integrity_check=ok, 96470 entregas.
+[OK ] S06 Copia con 1 bit alterado: rechazada por la etiqueta GCM; no se escribe salida.
+
+Resultado: 20 comprobaciones correctas, 0 fallidas.
