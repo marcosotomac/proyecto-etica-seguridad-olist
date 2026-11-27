@@ -1,6 +1,7 @@
 """Olist Lab: backend Flask del panel académico. Ejecutar con HTTPS de desarrollo."""
 import argparse
 import getpass
+import hashlib
 import secrets
 from datetime import timedelta
 from functools import wraps
@@ -55,10 +56,28 @@ def check_csrf():
         abort(400)
 
 
+def credential_version(password_hash):
+    """Huella del hash vigente: cambia al rotar la contraseña y revoca las sesiones previas."""
+    return hashlib.sha256(password_hash.encode()).hexdigest()[:16]
+
+
+def session_is_valid():
+    """Revalida la sesión contra la base en cada solicitud (usuario borrado, rol o clave cambiados)."""
+    if not session.get("username"):
+        return False
+    with connect() as db:
+        user = db.execute("SELECT password_hash, role FROM users WHERE username=?", (session["username"],)).fetchone()
+    if not user or user["role"] != session.get("role") or credential_version(user["password_hash"]) != session.get("cv"):
+        audit("session_revoked", session.get("username"))
+        session.clear()
+        return False
+    return True
+
+
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        if not session.get("username"):
+        if not session_is_valid():
             if request.path.startswith("/api/"):
                 return jsonify({"error": "sesión requerida"}), 401
             return redirect(url_for("login"))
@@ -123,6 +142,7 @@ def login():
             session.clear()  # nuevo identificador de sesión y nuevo token CSRF
             session.permanent = True
             session["username"], session["role"] = username, user["role"]
+            session["cv"] = credential_version(user["password_hash"])
             audit("login", username)
             return redirect(url_for("dashboard"))
         with connect() as db:
