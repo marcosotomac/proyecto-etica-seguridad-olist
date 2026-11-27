@@ -4,7 +4,7 @@ El objetivo de seguridad de Olist Lab combina \textbf{confidencialidad}, \textbf
 
 \paragraph{Cifrado y autenticación de copias.} SQLCipher cifra las páginas de la base con AES-256 y protege su integridad con HMAC según su configuración por defecto \cite{sqlcipher}. Esto protege el archivo frente a lectura directa sin la clave. Para respaldos, AES-GCM cifra y autentica la copia. La etiqueta permite detectar alteraciones y el nonce debe ser único para cada cifrado con una misma clave \cite{gcm}. La prueba del final muestra que la aplicación admite una copia válida y rechaza una alterada.
 
-\paragraph{Hash de contraseñas y TLS.} Un hash de contraseñas con sal y costo de cómputo permite verificar una contraseña sin guardarla de forma recuperable \cite{owasp}. La sal dificulta reutilizar cálculos entre cuentas. TLS protege el tráfico en tránsito y puede autenticar al servidor si se valida su certificado \cite{tls}. El certificado autofirmado de la demo permite verificar que hay cifrado en el canal local, pero la prueba no verifica una cadena pública de confianza.
+\paragraph{Hash de contraseñas y TLS.} Un hash de contraseñas con sal y costo de cómputo permite verificar una contraseña sin guardarla de forma recuperable \cite{owasp}. La sal dificulta reutilizar cálculos entre cuentas. TLS protege el tráfico en tránsito y puede autenticar al servidor si se valida su certificado \cite{tls}. En la entrega final el certificado del servidor lo emite una CA propia del proyecto (RFC 5280 \cite{x509}); el cliente que instala esa raíz valida la cadena y el nombre del host, mientras que uno sin ella rechaza la conexión.
 
 \paragraph{Autenticación, autorización y trazabilidad.} La autenticación establece qué cuenta inició sesión. La autorización comprueba qué puede hacer esa cuenta. En Olist Lab, Flask permite a lectores consultar los indicadores y reserva la auditoría a administradores. Los eventos permiten reconstruir accesos, consultas y fallos. Su valor depende de limitar el acceso y acordar plazos de conservación.
 
@@ -12,27 +12,29 @@ El objetivo de seguridad de Olist Lab combina \textbf{confidencialidad}, \textbf
 
 \section{Requerimientos de seguridad}
 \label{sec:requisitos-seguridad}
-La tabla corresponde al prototipo académico. La evidencia funcional se registró con cuentas desechables y una base restaurada de forma temporal. El entorno con TLS se vinculó a la interfaz local.
+La tabla resume cada requerimiento de seguridad, en qué entrega se implementó (E1: avance; EF: entrega final) y la evidencia reproducible. Las comprobaciones marcadas con \texttt{pytest} se ejecutan sobre una instancia aislada con datos sintéticos; las marcadas con \texttt{verify\_live} se ejecutan sobre la instancia real mediante HTTPS validado contra la CA propia (sección~\ref{sec:validacion}).
 
 {\small
-\begin{longtable}{@{}P{.078\textwidth}P{.25\textwidth}P{.31\textwidth}P{.27\textwidth}@{}}
-\caption{Requerimientos de seguridad, evidencia y alcance.}\\
+\begin{longtable}{@{}P{.055\textwidth}P{.26\textwidth}P{.06\textwidth}P{.29\textwidth}P{.23\textwidth}@{}}
+\caption{Requerimientos de seguridad, entrega, evidencia y alcance.}\\
 \toprule
-\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
+\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Ent.} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
 \midrule
 \endfirsthead
 \toprule
-\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
+\textbf{ID} & \textbf{Requerimiento y control} & \textbf{Ent.} & \textbf{Evidencia observada} & \textbf{Alcance o límite}\\
 \midrule
 \endhead
-S01 & Proteger la base en reposo con SQLCipher y una clave local. & La cabecera no es la de SQLite en claro. SQLCipher abre la copia y permite contar 96\,470 filas. & La clave y el archivo residen en el mismo equipo. El ZIP original sigue sin cifrar.\\
-S02 & Proteger las solicitudes en tránsito mediante HTTPS local. & Se negoció TLS 1.3 con certificado autofirmado, y la página de ingreso respondió HTTP 200. & La prueba verifica el canal local. El modo HTTP alternativo carece de cifrado.\\
-S03 & Almacenar credenciales como hashes verificables. & Dos cuentas de prueba guardaron hashes distintos de sus contraseñas y pudieron iniciar sesión. & Las cuentas de demo deben ser desechables y exclusivas del equipo.\\
-S04 & Exigir sesión y restringir la auditoría al administrador. & La API sin sesión redirigió al ingreso. Auditoría devolvió 403 al lector y 200 al administrador. POST de ingreso sin CSRF devolvió 400. & Las pruebas cubren las rutas y roles indicados.\\
-S05 & Registrar acciones de seguridad y consultas sin guardar contraseñas. & Se verificó la persistencia del ingreso y las consultas de prueba. La apertura de auditoría solo se registró para el administrador. & La retención y el borrado periódico siguen pendientes.\\
-S06 & Recuperar una copia cifrada y rechazar archivos alterados. & Se restauraron 96\,470 entregas con \texttt{integrity\_check = ok}. Una copia modificada fue rechazada antes de crear la salida. & La recuperación depende de conservar las claves necesarias.\\
-S07 & Revisar el código con una herramienta de análisis estático. & Bandit emitió tres alertas B608 antes del ajuste y cero después, en los cinco módulos Python revisados. & El análisis no abarca dependencias, interfaz ni servidor de producción.\\
-S08 & Definir uso seguro, formación, respuesta y mejoras. & Se documentaron el procedimiento, el plan de incidentes y la recuperación. El guion incluye un ejercicio para ambos integrantes. & La sesión conjunta y su acta requieren participación del equipo.\\
+S01 & Datos en reposo: base SQLCipher (AES-256 + HMAC por página); ZIP fuente sellado con AES-256-GCM; claves de 256 bits con permisos 0600 y carpeta configurable (\texttt{OLIST\_KEY\_DIR}). & E1 / EF & Cabecera no legible; una clave errónea no abre la base; ZIP en claro eliminado; 96\,470 filas con la clave. & Las claves siguen en el equipo de la demo salvo que se use otro volumen.\\
+S02 & Datos en tránsito: HTTPS con certificado emitido por la CA propia del proyecto, TLS $\geq$ 1.2 y HSTS. & EF & TLS 1.3 (\texttt{TLS\_AES\_256\_GCM\_SHA384}) verificado contra la CA; un cliente sin la CA rechaza la conexión. & La CA es privada: solo los equipos que la instalen confían en ella.\\
+S03 & Hash de contraseñas: scrypt con sal (Werkzeug); mínimo 12 caracteres con mayúsculas, minúsculas y dígito. & E1 / EF & Hashes únicos por cuenta; contraseñas débiles rechazadas. & Sin MFA.\\
+S04 & Gestión de accesos: sesión obligatoria, roles \texttt{admin}, \texttt{analyst} y \texttt{reader}, CSRF, sesión de 30 min, bloqueo por usuario (5) y por IP (20) en 15 min, cookies \texttt{Secure}, \texttt{HttpOnly} y \texttt{SameSite}, CSP. & E1 / EF & API sin sesión 401; panel 302; auditoría 403/200; sin CSRF 400; sexto intento 429. & Los roles \texttt{analyst} y \texttt{reader} comparten permisos analíticos.\\
+S05 & Registros de auditoría: ingresos, fallos, bloqueos, consultas, filtros inválidos, accesos denegados, CSRF rechazado y altas/bajas de usuarios; retención de 180 días. & E1 / EF & Eventos persistidos sin contraseñas; \texttt{purge-audit} elimina registros vencidos. & Los logs están en la misma base; no hay SIEM.\\
+S06 & Respaldo y recuperación: copia AES-256-GCM autenticada, rotación (\texttt{-{}-keep}), restauración con \texttt{integrity\_check}. & E1 / EF & 96\,470 filas restauradas; una copia con un bit alterado se rechaza sin escribir salida. & La copia debe guardarse fuera del equipo.\\
+S07 & Herramientas de análisis: Bandit (SAST), pip-audit y npm audit (SCA), gitleaks (secretos), pytest y verificación en vivo; CI semanal. & EF & 0 hallazgos tras corregir 4 B101, 3 B608 y 15 CVE de npm (tabla~\ref{tab:herramientas}). & No sustituye una prueba de penetración.\\
+S08 & Uso seguro: política, procedimiento, concientización y formación del equipo. & E1 / EF & Sección~\ref{sec:politicas}; ejercicio de formación ejecutado sobre el incidente real de la sección~\ref{sec:incidente-real}. & El cumplimiento organizativo no se audita externamente.\\
+S09 & Riesgos de una brecha y entidades afectadas. & E1 / EF & Modelo de amenazas y DPIA (secciones~\ref{sec:amenazas} y~\ref{sec:dpia}). & Evaluación cualitativa.\\
+S10 & Plan de respuesta ante incidentes y recomendaciones futuras. & E1 / EF & Plan NIST SP 800-61 aplicado a un caso real; recomendaciones en la sección~\ref{sec:mejoras}. & Plazos legales no evaluados por un abogado.\\
 \bottomrule
 \end{longtable}
 }
