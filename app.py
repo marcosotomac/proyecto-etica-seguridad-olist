@@ -125,9 +125,9 @@ def login():
         with connect() as db:
             db.execute("INSERT INTO login_attempts(username, ip) VALUES (?,?)", (username, client_ip()))
         audit("login_failed", username)
-        error = "Credenciales incorrectas"
+        error = "Credenciales incorrectas"  # mismo mensaje para usuario inexistente o clave errónea
     session["csrf"] = secrets.token_urlsafe(32)
-    return render_template("login.html", error=error, csrf=session["csrf"])
+    return render_template("login.html", error=error, csrf=session["csrf"]), (401 if error else 200)
 
 
 @app.post("/logout")
@@ -196,6 +196,12 @@ def audit_view():
         entries = db.execute("SELECT at, username, action FROM audit_log ORDER BY id DESC LIMIT 100").fetchall()
     audit("audit_view", session["username"])
     return render_template("audit.html", entries=entries)
+
+
+@app.errorhandler(429)
+def too_many(error):
+    return render_template("login.html", error="Demasiados intentos. Espera 15 minutos.",
+                           csrf=session.setdefault("csrf", secrets.token_urlsafe(32))), 429
 
 
 # --- Administración por consola (no expuesta en la web) -------------------------------------------
